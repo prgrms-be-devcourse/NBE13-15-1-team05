@@ -1,0 +1,86 @@
+
+### A01 카테고리 목록       GET    /api/v1/categories                              200 · Category[]
+### A02 카테고리 상세       GET    /api/v1/categories/{categoryId}                 200 · Category
+### A03 카테고리 등록       POST   /api/v1/categories                              201 · Category
+### A04 카테고리 수정       PUT    /api/v1/categories/{categoryId}                 200 · Category
+### A05 카테고리 삭제       DELETE /api/v1/categories/{categoryId}                 204 · 빈 본문
+### A06 전체 메뉴           GET    /api/v1/menus                                   200 · Menu[]
+GET http://localhost:8080/api/v1/menus
+
+### A07 메뉴 상세           GET    /api/v1/menus/{menuId}                          200 · Menu
+GET http://localhost:8080/api/v1/menus/1
+
+### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
+POST http://localhost:8080/api/v1/menus
+Content-Type: application/json
+
+{
+  "name": "Columbia Nariñó",
+  "description": "콜롬비아 나리뇨 원두를 담은 커피빈 패키지입니다.",
+  "categoryId": 1,
+  "price": 5000
+}
+
+### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
+POST http://localhost:8080/api/v1/menus
+Content-Type: application/json
+
+{
+  "name": "Brazil Serra Do Caparaó",
+  "description": "브라질 세하 두 카파라오 원두를 담은 커피빈 패키지입니다.",
+  "categoryId": 1,
+  "price": 7000
+}
+
+### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
+POST http://localhost:8080/api/v1/menus
+Content-Type: application/json
+
+{
+  "name": "Columbia Quindío (White Wine Extended Fermentation)",
+  "description": "콜롬비아 킨디오 원두를 담은 커피빈 패키지입니다.",
+  "categoryId": 1,
+  "price": 9000
+}
+
+
+### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
+POST http://localhost:8080/api/v1/menus
+Content-Type: application/json
+
+{
+  "name": "Ethiopia Sidamo",
+  "description": "에티오피아 시다모 원두를 담은 커피빈 패키지입니다.",
+  "categoryId": 1,
+  "price": 11000
+}
+
+
+### A09 메뉴 일반 수정      PUT    /api/v1/menus/{menuId}                          200 · Menu
+PUT http://localhost:8080/api/v1/menus
+Content-Type: application/json
+
+{
+  "name": "ice americano",
+  "description": "코리아 전통 커피",
+  "categoryId": 1,
+  "price": 2000
+}
+
+### A10 메뉴 삭제           DELETE /api/v1/menus/{menuId}                          204 · 빈 본문
+DELETE http://localhost:8080/api/v1/menus/2
+
+### A11 주문 접수           POST   /api/v1/orders                                  201 · Order
+### A12 이메일별 주문       GET    /api/v1/orders?email={email}                    200 · OrderSummary[]
+### A13 주문 상세           GET    /api/v1/orders/{orderId}                        200 · Order
+### A14 배송 묶음           GET    /api/v1/delivery-batches?shippingDate={shippingDate}  200 · DeliveryBatch[]
+### A15 카테고리별 메뉴     GET    /api/v1/categories/{categoryId}/menus           200 · Menu[]
+### A16 주문 취소           POST   /api/v1/orders/{orderId}/cancel                 200 · 전체 Order
+### A17 접수일별 주문 통계  GET    /api/v1/statistics/orders?date={date}           200 · OrderStatistics
+### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus?date={date}            200 · MenuStatistics[]
+### A19 판매 중 메뉴        GET    /api/v1/menus/available                         200 · Menu[]
+### A20 메뉴명 검색         GET    /api/v1/menus/search?keyword={keyword}          200 · Menu[]
+### A21 판매 여부 변경      PUT    /api/v1/menus/{menuId}/availability             200 · 전체 Menu
+### A22 주문 메모 수정      PUT    /api/v1/orders/{orderId}/memo                   200 · 전체 Order
+### A23 재주문              POST   /api/v1/orders/{orderId}/reorder                201 · 새 Order
+### A24 접수일별 고객 통계  GET    /api/v1/statistics/customers?date={date}        200 · CustomerStatistics[]
