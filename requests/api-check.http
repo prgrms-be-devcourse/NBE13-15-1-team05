@@ -1,9 +1,34 @@
 
-### A01 카테고리 목록       GET    /api/v1/categories                              200 · Category[]
-### A02 카테고리 상세       GET    /api/v1/categories/{categoryId}                 200 · Category
-### A03 카테고리 등록       POST   /api/v1/categories                              201 · Category
-### A04 카테고리 수정       PUT    /api/v1/categories/{categoryId}                 200 · Category
-### A05 카테고리 삭제       DELETE /api/v1/categories/{categoryId}                 204 · 빈 본문
+
+### A01 카테고리 목록
+GET http://localhost:8080/api/v1/categories
+
+
+### A02 카테고리 상세
+GET http://localhost:8080/api/v1/categories/1
+
+
+### A03 카테고리 등록
+POST http://localhost:8080/api/v1/categories
+Content-Type: application/json
+
+{
+  "name": "Coffee Beans"
+}
+
+
+### A04 카테고리 수정
+PUT http://localhost:8080/api/v1/categories/1
+Content-Type: application/json
+
+{
+  "name": "Specialty Coffee Beans"
+}
+
+
+### A05 카테고리 삭제
+DELETE http://localhost:8080/api/v1/categories/1
+
 ### A06 전체 메뉴           GET    /api/v1/menus                                   200 · Menu[]
 GET http://localhost:8080/api/v1/menus
 
