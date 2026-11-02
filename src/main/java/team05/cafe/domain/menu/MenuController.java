@@ -66,4 +66,10 @@ public class MenuController {
         }
     }
 
+    //A19
+    @GetMapping("/available")
+    public List<MenuResponse> findAvailableTrue() {
+        return menuReadService.findAvailableTrue();
+    }
+
 }

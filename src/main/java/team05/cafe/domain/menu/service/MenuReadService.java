@@ -34,4 +34,13 @@ public class MenuReadService {
 
         return MenuResponse.from(menu);
     }
+
+    //A19
+    public List<MenuResponse> findAvailableTrue() {
+        List<Menu> menus = menuRepository.findByAvailableTrue();
+
+        return menus.stream()
+                .map(menu -> MenuResponse.from(menu))
+                .toList();
+    }
 }
