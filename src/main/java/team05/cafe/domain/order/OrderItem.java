@@ -32,12 +32,20 @@ public class OrderItem {
     @Column(nullable = false)
     private int quantity; // 주문 수량
 
-    private OrderItem(Order order, Menu menu, int quantity) {
+    public OrderItem(Order order, Menu menu, int quantity) {
         this.order = order;
         this.menu = menu;
         this.menuName = menu.getName();
         this.unitPrice = menu.getPrice();
         this.quantity = quantity;
+    }
+
+    public int getLineAmount() {
+        return unitPrice * quantity;
+    }
+
+    public Long getMenuId() {
+        return menu.getId();
     }
 
 }
