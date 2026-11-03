@@ -8,6 +8,7 @@ import team05.cafe.domain.menu.MenuRepository;
 import team05.cafe.domain.order.Order;
 import team05.cafe.domain.order.OrderItem;
 import team05.cafe.domain.order.dto.OrderResponse;
+import team05.cafe.domain.order.dto.OrderSummaryResponse;
 import team05.cafe.domain.order.dto.PlaceOrderRequest;
 import team05.cafe.domain.order.repository.OrderItemRepository;
 import team05.cafe.domain.order.repository.OrderRepository;
@@ -45,6 +46,16 @@ public class OrderService {
         orderItemRepository.saveAll(orderItems);
 
         return OrderResponse.from(order, orderItems);
+    }
+
+    public List<OrderSummaryResponse> getOrdersByEmail(String email) {
+        List<Order> orders = orderRepository.findByEmailOrderByCreatedAtDescIdDesc(email);
+
+        List<OrderSummaryResponse> responses = new ArrayList<>();
+        for (Order order : orders) {
+            responses.add(OrderSummaryResponse.from(order));
+        }
+        return responses;
     }
 
 }
