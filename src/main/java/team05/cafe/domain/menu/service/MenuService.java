@@ -2,6 +2,7 @@ package team05.cafe.domain.menu.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team05.cafe.domain.category.Category;
@@ -13,6 +14,7 @@ import team05.cafe.domain.menu.dto.MenuResponse;
 import team05.cafe.domain.menu.dto.MenuUpdateRequest;
 import team05.cafe.global.error.BusinessException;
 import team05.cafe.global.error.ErrorCode;
+import team05.cafe.global.redis.CacheNames;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final CategoryRepository categoryRepository;
 
+    @CacheEvict(cacheNames = CacheNames.MENUS , key = "'all'")
     @Transactional
     public MenuResponse create(@Valid MenuCreateRequest req) {
         Category category = categoryRepository.findById(req.categoryId()).orElseThrow(
@@ -37,6 +40,7 @@ public class MenuService {
     }
 
 
+    @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
     public Long deleteMenu(Long menuId) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
@@ -47,6 +51,7 @@ public class MenuService {
         return menu.getId();
     }
 
+    @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
     public MenuResponse update(Long menuId, @Valid MenuUpdateRequest req) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
@@ -68,6 +73,7 @@ public class MenuService {
         return MenuResponse.from(menu);
     }
 
+    @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
     public void changeAvailability(@Valid Long menuId) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(

@@ -8,3 +8,13 @@
 request/api-check.http
 
 ### 6. 평가 대상 브랜치·태그 또는 커밋, 선택 심화 코드·검증 방법
+
+
+### 7. 메뉴 레디스 
+docker run -d --name redis -p 6379:6379 redis:7-alpine
+A06  name=menus, key=all
+A19  name=menus, key=availableList
+TTL 600s 
+
+8 9 10 21 사용시 
+CacheEvict  name=menus key allEntries
