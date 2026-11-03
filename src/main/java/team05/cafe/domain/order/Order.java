@@ -41,7 +41,6 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus status;
 
-    @Column(nullable = false)
     private LocalDateTime cancelledAt;
 
     @Column(nullable = false)
