@@ -72,4 +72,10 @@ public class MenuController {
         return menuReadService.findAvailableTrue();
     }
 
+    //A20
+    @GetMapping("/search")
+    public List<MenuResponse> findByNameContaining(@RequestParam String keyword){
+        return menuReadService.findByNameContaining(keyword);
+    }
+
 }

@@ -43,4 +43,22 @@ public class MenuReadService {
                 .map(menu -> MenuResponse.from(menu))
                 .toList();
     }
+
+    //A15
+    public List<MenuResponse> findByCategoryId(Long categoryId) {
+        List<Menu> menus = menuRepository.findByCategoryId(categoryId);
+
+        return menus.stream()
+                .map(menu -> MenuResponse.from(menu))
+                .toList();
+    }
+
+    //A20
+    public List<MenuResponse> findByNameContaining(String keyword) {
+        List<Menu> menus = menuRepository.findByNameContaining(keyword);
+
+        return menus.stream()
+                .map(menu -> MenuResponse.from(menu))
+                .toList();
+    }
 }

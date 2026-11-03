@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import team05.cafe.domain.menu.dto.MenuResponse;
+import team05.cafe.domain.menu.service.MenuReadService;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final MenuReadService menuReadService;
 
     // A01: 카테고리 전체 조회
     @GetMapping
@@ -47,6 +50,12 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void categoryDelete(@PathVariable Long categoryId) {
         categoryService.delete(categoryId);
+    }
+
+    //A15
+    @GetMapping("/{categoryId}/menus")
+    public List<MenuResponse> findByCategoryId(@PathVariable Long categoryId){
+        return menuReadService.findByCategoryId(categoryId);
     }
 
 }
