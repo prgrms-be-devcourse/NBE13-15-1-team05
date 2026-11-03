@@ -23,7 +23,7 @@ public class MenuController {
     private final MenuReadService menuReadService;
 
     @PostMapping
-    public ResponseEntity<MenuResponse> create(@RequestBody @Valid  MenuCreateRequest req) {
+    public ResponseEntity<MenuResponse> create(@RequestBody @Valid MenuCreateRequest req) {
         MenuResponse saved = menuService.create(req);
 
         URI location = ServletUriComponentsBuilder
@@ -52,18 +52,14 @@ public class MenuController {
     }
 
     @PutMapping("/{menuId}")
-    public ResponseEntity<MenuResponse> updateMenu(@PathVariable Long menuId,@Valid @RequestBody MenuUpdateRequest req) {
-        return ResponseEntity.ok(menuService.update(menuId ,req));
+    public ResponseEntity<MenuResponse> updateMenu(@PathVariable Long menuId, @Valid @RequestBody MenuUpdateRequest req) {
+        return ResponseEntity.ok(menuService.update(menuId, req));
     }
-
 
     //200 · 전체 Menu
     @PutMapping("/{menuId}/availability")
-    public ResponseEntity<List<MenuResponse>> updateMenuAvailability(@PathVariable Long menuId) {
-        menuService.changeAvailability(menuId);
-        {
-            return ResponseEntity.ok(menuReadService.findAll());
-        }
+    public ResponseEntity<MenuResponse> updateMenuAvailability(@PathVariable Long menuId) {
+        return ResponseEntity.ok(menuService.changeAvailability(menuId));
     }
 
     //A19
