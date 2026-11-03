@@ -17,6 +17,7 @@ public final class DateParams {
 
     private static final LocalDate MIN = LocalDate.of(2000, 1, 1);
     private static final LocalDate MAX = LocalDate.of(2099, 12, 31);
+    private static final String REASON = "2000-01-01~2099-12-31 사이의 YYYY-MM-DD 형식 실제 날짜여야 합니다.";
 
     private DateParams() {
     }
@@ -38,8 +39,8 @@ public final class DateParams {
         return date;
     }
 
-    // TODO: 공통 예외가 fieldErrors를 지원하면 fieldName을 함께 넘기도록 수정
+    // 400 VALIDATION_ERROR + fieldErrors: { "<fieldName>": "<이유>" }
     private static BusinessException invalid(String fieldName) {
-        return new BusinessException(ErrorCode.INVALID_INPUT);
+        return new BusinessException(ErrorCode.INVALID_INPUT, fieldName, REASON);
     }
 }
