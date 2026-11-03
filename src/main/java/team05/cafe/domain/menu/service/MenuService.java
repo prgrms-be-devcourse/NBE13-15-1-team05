@@ -42,13 +42,11 @@ public class MenuService {
 
     @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
-    public Long deleteMenu(Long menuId) {
+    public void deleteMenu(Long menuId) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_MENU)
         );
-
         menuRepository.delete(menu);
-        return menu.getId();
     }
 
     @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
