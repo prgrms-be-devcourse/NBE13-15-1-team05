@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
+@Table(name = "orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
@@ -19,13 +18,13 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     private String address;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5)
     private String postcode;
 
     @Column(nullable = false)
@@ -34,16 +33,17 @@ public class Order {
     @Column(nullable = false)
     private LocalTime shippingDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private OrderStatus status;
 
     @Column(nullable = false)
     private  LocalDateTime cancelledAt;
 
-    @Column(nullable = false, length = 100)
-    private String memo;
+    @Column(nullable = false)
+    private int totalAmount;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> items = new ArrayList<>();
+    @Column(nullable = false, length = 200)
+    private String memo;
 }
 
