@@ -4,25 +4,50 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.validation.BindingResult;
 
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
 public class ErrorResponse {
+
     private final String code;
     private final String message;
-    private final List<FieldError> errors;
+    private final Map<String, String> fieldErrors;
 
+    // 일반 오류 (404, 409 등)
     public static ErrorResponse of(ErrorCode ec) {
-        return ErrorResponse.builder().code(ec.getCode()).message(ec.getMessage()).build();
+        return ErrorResponse.builder()
+                .code(ec.getCode())
+                .message(ec.getMessage())
+                .fieldErrors(Map.of())
+                .build();
+    }
+    //특정 필드 입력 오류 & 이유
+    public static ErrorResponse of(ErrorCode ec, String field, String reason) {
+        return ErrorResponse.builder()
+                .code(ec.getCode())
+                .message(ec.getMessage())
+                .fieldErrors(Map.of(field, reason))
+                .build();
     }
 
+    // @Valid 검증 오류 (400)
     public static ErrorResponse of(ErrorCode ec, BindingResult br) {
-        List<FieldError> errors = br.getFieldErrors().stream()
-                .map(e -> new FieldError(e.getField(), e.getDefaultMessage()))
-                .toList();
-        return ErrorResponse.builder().code(ec.getCode()).message(ec.getMessage()).errors(errors).build();
-    }
+        Map<String, String> fieldErrors = br.getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getField(),
+                        e -> e.getDefaultMessage() == null
+                                ? "입력값이 올바르지 않습니다."
+                                : e.getDefaultMessage(),
+                        (first, second) -> first
+                ));
 
-    public record FieldError(String field, String reason) {}
+        return ErrorResponse.builder()
+                .code(ec.getCode())
+                .message(ec.getMessage())
+                .fieldErrors(fieldErrors)
+                .build();
+    }
 }

@@ -1,5 +1,5 @@
 @categoryId = 2
-@keyword = Columbia
+@keyword = nari
 
 ### A01 카테고리 목록
 GET http://localhost:8080/api/v1/categories
@@ -17,9 +17,25 @@ Content-Type: application/json
   "name": "Coffee Beans"
 }
 
+### A03-1 공백 제거 후 중복 검사
+POST http://localhost:8080/api/v1/categories
+Content-Type: application/json
+
+{
+  "name": "  Coffee Beans  "
+}
+
+### A03-2: 대소문자 구분 검사
+POST http://localhost:8080/api/v1/categories
+Content-Type: application/json
+
+{
+  "name": "coffee beans"
+}
+
 
 ### A04 카테고리 수정
-PUT http://localhost:8080/api/v1/categories/1
+PUT http://localhost:8080/api/v1/categories/{{categoryId}}
 Content-Type: application/json
 
 {
@@ -28,7 +44,20 @@ Content-Type: application/json
 
 
 ### A05 카테고리 삭제
-DELETE http://localhost:8080/api/v1/categories/1
+DELETE http://localhost:8080/api/v1/categories/4
+
+### 추가 테스트
+### ID 범위 오류 → 400
+GET http://localhost:8080/api/v1/categories/0
+
+### ID 자료형 오류 → 400
+GET http://localhost:8080/api/v1/categories/abc
+
+### 검색어 누락 → 400
+GET http://localhost:8080/api/v1/menus/search
+
+### 존재하지 않는 카테고리 → 404
+GET http://localhost:8080/api/v1/categories/999999
 
 ### A06 전체 메뉴           GET    /api/v1/menus                                   200 · Menu[]
 GET http://localhost:8080/api/v1/menus
@@ -102,7 +131,7 @@ DELETE http://localhost:8080/api/v1/menus/2
 ### A14 배송 묶음           GET    /api/v1/delivery-batches?shippingDate={shippingDate}  200 · DeliveryBatch[]
 
 ### A15 카테고리별 메뉴     GET    /api/v1/categories/{categoryId}/menus           200 · Menu[]
-GET http://localhost:8080/api/v1/categories/{{categoryId}}/menus
+GET http://localhost:8080/api/v1/categories/3/menus
 
 ### A16 주문 취소           POST   /api/v1/orders/{orderId}/cancel                 200 · 전체 Order
 ### A17 접수일별 주문 통계  GET    /api/v1/statistics/orders?date={date}           200 · OrderStatistics
@@ -112,7 +141,7 @@ GET http://localhost:8080/api/v1/categories/{{categoryId}}/menus
 GET http://localhost:8080/api/v1/menus/available
 
 ### A20 메뉴명 검색         GET    /api/v1/menus/search?keyword={keyword}          200 · Menu[]
-GET http://localhost:8080/api/v1/menus/search?keyword={{keyword}}
+GET http://localhost:8080/api/v1/menus/search?keyword=_
 
 ### A21 판매 여부 변경      PUT    /api/v1/menus/{menuId}/availability             200 · 전체 Menu
 PUT http://localhost:8080/api/v1/menus/1/availability

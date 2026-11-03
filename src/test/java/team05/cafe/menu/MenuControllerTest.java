@@ -12,6 +12,7 @@ import team05.cafe.domain.menu.MenuController;
 import team05.cafe.domain.menu.MenuRepository;
 import team05.cafe.domain.menu.dto.MenuCreateRequest;
 import team05.cafe.domain.menu.dto.MenuResponse;
+import team05.cafe.domain.menu.service.MenuReadService;
 import team05.cafe.domain.menu.service.MenuService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +28,8 @@ public class MenuControllerTest {
     MockMvc mockMvc;
     @MockitoBean
     MenuService menuService;
+    @MockitoBean
+    MenuReadService menuReadService;
 
     @Test
     @DisplayName("POST /api/v1/menus - 메뉴 등록 성공")

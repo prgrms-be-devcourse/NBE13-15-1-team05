@@ -8,16 +8,41 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     // 공통
-    INVALID_INPUT(HttpStatus.BAD_REQUEST, "C001", "잘못된 입력값입니다"),
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "입력값을 확인해 주세요."),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C999", "서버 오류가 발생했습니다"),
 
     // 도메인별
     //카테고리
-    NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, "C001","카테고리가 없습니다."),
+    NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, "CATEGORY_NOT_FOUND", "카테고리를 찾을 수 없습니다."),
+
+    CATEGORY_NAME_DUPLICATED(
+            HttpStatus.CONFLICT,
+            "CATEGORY_NAME_DUPLICATED",
+            "같은 이름의 카테고리가 이미 있습니다."
+    ),
+
+    CATEGORY_IN_USE(
+            HttpStatus.CONFLICT,
+            "CATEGORY_IN_USE",
+            "메뉴가 등록된 카테고리는 삭제할 수 없습니다."
+    ),
 
 
     //메뉴
-    NOT_FOUND_MENU(HttpStatus.NOT_FOUND, "C001","메뉴가 없습니다."),
+    NOT_FOUND_MENU(HttpStatus.NOT_FOUND, "MENU_NOT_FOUND", "메뉴를 찾을 수 없습니다."),
+
+    MENU_IN_USE(
+            HttpStatus.CONFLICT,
+            "MENU_IN_USE",
+            "주문에 사용된 메뉴는 삭제할 수 없습니다."
+    ),
+
+    MENU_UNAVAILABLE(
+            HttpStatus.CONFLICT,
+            "MENU_UNAVAILABLE",
+            "판매 중지된 메뉴가 포함되어 있습니다."
+    ),
+
 
 
     ZZZZZZZZZZZZZZZZZZZZ(HttpStatus.BAD_REQUEST, "9999", "마지막 에러");

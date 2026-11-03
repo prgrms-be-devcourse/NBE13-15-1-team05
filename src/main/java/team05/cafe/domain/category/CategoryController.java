@@ -2,6 +2,7 @@
 package team05.cafe.domain.category;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class CategoryController {
 
     // A02: 카테고리 단건 조회
     @GetMapping("/{categoryId}")
-    public CategoryResponse findOne(@PathVariable Long categoryId) {
+    public CategoryResponse findOne(@PathVariable @Positive Long categoryId) {
         return categoryService.findOne(categoryId);
     }
 
@@ -40,7 +41,7 @@ public class CategoryController {
     // A04: 카테고리 수정
     @PutMapping("/{categoryId}")
     public CategoryResponse categoryUpdate(
-            @PathVariable Long categoryId,
+            @PathVariable @Positive Long categoryId,
             @Valid @RequestBody CategoryUpdateRequest request) {
         return categoryService.update(categoryId, request);
     }
@@ -48,13 +49,13 @@ public class CategoryController {
     // A05: 카테고리 삭제
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void categoryDelete(@PathVariable Long categoryId) {
+    public void categoryDelete(@PathVariable @Positive Long categoryId) {
         categoryService.delete(categoryId);
     }
 
     //A15
     @GetMapping("/{categoryId}/menus")
-    public List<MenuResponse> findByCategoryId(@PathVariable Long categoryId){
+    public List<MenuResponse> findByCategoryId(@PathVariable @Positive Long categoryId){
         return menuReadService.findByCategoryId(categoryId);
     }
 
