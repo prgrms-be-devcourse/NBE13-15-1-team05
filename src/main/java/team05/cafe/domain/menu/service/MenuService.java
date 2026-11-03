@@ -75,11 +75,13 @@ public class MenuService {
 
     @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
-    public void changeAvailability(@Valid Long menuId) {
+    public MenuResponse changeAvailability(@Valid Long menuId) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_MENU)
         );
 
         menu.changeAvailability();
+
+        return MenuResponse.from(menu);
     }
 }
