@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team05.cafe.domain.order.Order;
 import team05.cafe.domain.order.OrderItem;
+import team05.cafe.domain.order.OrderStatus;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -45,7 +47,9 @@ public class StatisticsService {
 
     // ── 공통 도우미 ──
 
-    /** 서울 기준 그날 00:00:00 이상 ~ 다음 날 00:00:00 미만에 접수된 주문 (취소 포함) */
+    /**
+     * 서울 기준 그날 00:00:00 이상 ~ 다음 날 00:00:00 미만에 접수된 주문 (취소 포함)
+     */
     private List<Order> findOrdersReceivedOn(LocalDate date) {
         return orderRepository.findByCreatedAtGreaterThanEqualAndCreatedAtLessThan(
                 date.atStartOfDay(), date.plusDays(1).atStartOfDay());
@@ -69,5 +73,24 @@ public class StatisticsService {
 
     private static long sumAmount(List<OrderItem> items) {
         return items.stream().mapToLong(OrderItem::getLineAmount).sum();
+    }
+
+    public OrderStatisticsResponse findAllByOrderedDate(LocalDate date) {
+        LocalDate targetDate = date == null ? LocalDate.now() : date;
+
+        //sql에서 로우마다 형변환 보다 백단에서 형변환시킴
+        LocalDateTime start = targetDate.atStartOfDay();            // 2026-11-03T00:00:00
+        LocalDateTime end = targetDate.plusDays(1).atStartOfDay();  // 2026-11-04T00:00:00
+
+        List<OrderItem> list = orderItemRepository.findAllByOrderedDate(start ,end);
+
+        long orderCount = list.size();
+        long placedCount = list.stream().filter(o -> o.getOrder().getStatus() == OrderStatus.PLACED).count();
+        long cancelledOrderCount = list.stream().filter(o -> o.getOrder().getStatus() == OrderStatus.CANCELLED).count();
+        long totalQuantity = list.stream().mapToLong(OrderItem::getQuantity).sum();
+        long totalAmount = list.stream().mapToLong(OrderItem::getLineAmount).sum();
+        return OrderStatisticsResponse.of(targetDate, orderCount, placedCount, cancelledOrderCount, totalQuantity, totalAmount);
+
+
     }
 }
