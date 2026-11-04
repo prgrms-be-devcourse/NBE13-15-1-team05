@@ -43,6 +43,13 @@ public enum ErrorCode {
             "판매 중지된 메뉴가 포함되어 있습니다."
     ),
 
+    //주문
+    ADDRESS_MISMATCH(
+            HttpStatus.CONFLICT,
+            "ADDRESS_MISMATCH",
+            "이메일과 배송일이 같은 기존 주문과 주소, 우편번호가 다릅니다."
+    ),
+
 
 
     ZZZZZZZZZZZZZZZZZZZZ(HttpStatus.BAD_REQUEST, "9999", "마지막 에러");

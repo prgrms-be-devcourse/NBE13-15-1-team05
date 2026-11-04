@@ -1,4 +1,4 @@
-package team05.cafe.domain.order.Sevice;
+package team05.cafe.domain.order.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,16 +7,21 @@ import team05.cafe.domain.menu.Menu;
 import team05.cafe.domain.menu.MenuRepository;
 import team05.cafe.domain.order.Order;
 import team05.cafe.domain.order.OrderItem;
+import team05.cafe.domain.order.OrderStatus;
 import team05.cafe.domain.order.dto.OrderResponse;
 import team05.cafe.domain.order.dto.OrderSummaryResponse;
 import team05.cafe.domain.order.dto.PlaceOrderRequest;
 import team05.cafe.domain.order.repository.OrderItemRepository;
 import team05.cafe.domain.order.repository.OrderRepository;
+import team05.cafe.global.error.BusinessException;
+import team05.cafe.global.error.ErrorCode;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -28,17 +33,52 @@ public class OrderService {
 
     @Transactional
     public OrderResponse place(PlaceOrderRequest request){
+        Set<Long> menuIds = new HashSet<>();
+        for (PlaceOrderRequest.Item item : request.items()) {
+            if (menuIds.contains(item.menuId())) {
+                throw new BusinessException(ErrorCode.INVALID_INPUT, "items", "같은 메뉴는 중복될 수 없습니다.");
+            }
+            menuIds.add(item.menuId());
+        }
         return createOrder(request.email(), request.address(), request.postcode(), request.items());
     }
 
     private OrderResponse createOrder(String email, String address, String postcode,
                                       List<PlaceOrderRequest.Item> items) {
+        // 받아온 메뉴들이 존재하는지 확인
+        List<Menu> menus = new ArrayList<>();
+        for (PlaceOrderRequest.Item item : items) {
+            Menu menu = menuRepository.findById(item.menuId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MENU));
+            menus.add(menu);
+        }
+
+        // 판매를 하지 않는 메뉴인지 확인
+        for (Menu menu : menus) {
+            if (!menu.isAvailable()) {
+                throw new BusinessException(ErrorCode.MENU_UNAVAILABLE);
+            }
+        }
+
+        // 주문 객체 생성
         Order order = new Order(email, address, postcode, LocalDateTime.now(clock));
 
+        // 같은 이메일, 배송일 주문이 PLACED된 주문과 주소, 우편번호가 같은지 확인
+        List<Order> sameBatch = orderRepository.findByEmailAndShippingDateAndStatus(
+                email, order.getShippingDate(), OrderStatus.PLACED);
+        for (Order existing : sameBatch) {
+            if (!existing.getEmail().equals(email)) {
+                continue;   // DB가 대소문자를 무시해서 섞여 온 다른 고객의 주문은 건너뜀
+            }
+            if (!existing.hasSameDestination(address, postcode)) {
+                throw new BusinessException(ErrorCode.ADDRESS_MISMATCH);
+            }
+        }
+
+        // 주문 아이템 생성
         List<OrderItem> orderItems = new ArrayList<>();
-        for (PlaceOrderRequest.Item item : items) {
-            Menu menu = menuRepository.findById(item.menuId()).orElseThrow();
-            orderItems.add(new OrderItem(order, menu, item.quantity()));
+        for (int i = 0; i < items.size(); i++) {
+            orderItems.add(new OrderItem(order, menus.get(i), items.get(i).quantity()));
         }
         order.confirmItems(orderItems);
 

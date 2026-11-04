@@ -72,6 +72,11 @@ public class Order {
         }
     }
 
+
+    public boolean hasSameDestination(String address, String postcode) {
+        return this.address.equals(address) && this.postcode.equals(postcode);
+    }
+
     public boolean isPlaced() {
         return this.status == OrderStatus.PLACED;
     }
