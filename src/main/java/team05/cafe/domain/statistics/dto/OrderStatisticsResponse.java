@@ -22,20 +22,5 @@ public record OrderStatisticsResponse(
         return new OrderStatisticsResponse(date, 0, 0, 0, 0, 0);
     }
 
-    public static OrderStatisticsResponse of(LocalDate date,
-                                             Long orderCount,
-                                             Long placedOrderCount,
-                                             Long cancelledOrderCount,
-                                             Long totalQuantity,
-                                             Long totalAmount) {
-        return new OrderStatisticsResponse(
-                date,
-                orderCount,
-                placedOrderCount,
-                cancelledOrderCount,
-                totalQuantity,
-                totalAmount
-        );
-    }
 
 }

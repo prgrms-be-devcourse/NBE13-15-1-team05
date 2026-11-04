@@ -31,7 +31,7 @@ public class MenuService {
         );
 
         Menu menu = Menu.builder()
-                .name(req.name())
+                .name(req.name().strip())
                 .price(req.price())
                 .description(req.description())
                 .category(category)

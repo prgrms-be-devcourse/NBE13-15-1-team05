@@ -50,4 +50,27 @@ public class Menu {
     public void changeAvailability() {
         this.available = !this.available;
     }
+
+    //    갯수가 있다면
+//    @Column(nullable = false)
+//    private int stock;
+//
+//    void changeStock(int stock) {
+//        if (stock > 0) {
+//            this.stock = stock;
+//        }
+//    }
+//
+//    void checkStock() {
+//        if (stock <= 0) {
+//            this.available = false;
+//        }
+//    }
+//
+//    void decreaseStock(int quantity) {
+//        if (this.stock > quantity) {
+//            this.stock -= quantity;
+//        }
+//        throw new BusinessException(ErrorCode.INTERNAL_ERROR);
+//    }
 }
