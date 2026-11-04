@@ -9,8 +9,6 @@
 - MYSQL : 8.0
 ### 4. 새 DB 준비·초기 데이터 등록 절차, 백엔드·web 실행 폴더·명령·주소
 - ddl-auto : UPDATE
-.code insert into category(name)
-  values ('싱글오리진'), ('블렌드');
 ```mysql
 #초기 카데고리
 insert into category(name)
