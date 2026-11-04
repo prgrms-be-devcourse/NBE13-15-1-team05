@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import team05.cafe.domain.statistics.dto.OrderStatisticsDateResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
 import java.time.LocalDate;
@@ -24,7 +25,8 @@ public class StatisticsController {
     }
 
     @GetMapping("/menus")
-    public ResponseEntity<OrderStatisticsResponse> getStatistics(@RequestParam(required = false) LocalDate date) {
-        return ResponseEntity.ok(statisticsService.findAllByOrderedDate(date));
+    public ResponseEntity<OrderStatisticsDateResponse> getStatistics(@RequestParam(required = false) LocalDate date) {
+        return ResponseEntity.ok(statisticsService.findAllByOrderedDateQuery(date));
     }
+
 }

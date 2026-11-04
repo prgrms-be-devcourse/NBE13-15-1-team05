@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import team05.cafe.domain.order.Order;
 import team05.cafe.domain.order.OrderItem;
 import team05.cafe.domain.order.OrderStatus;
+import team05.cafe.domain.statistics.dto.OrderStatisticsDateResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
 import java.time.LocalDate;
@@ -75,7 +76,9 @@ public class StatisticsService {
         return items.stream().mapToLong(OrderItem::getLineAmount).sum();
     }
 
-    public OrderStatisticsResponse findAllByOrderedDate(LocalDate date) {
+
+//    A18 join fetch > 가공
+    public OrderStatisticsDateResponse findAllByOrderedDate(LocalDate date) {
         LocalDate targetDate = date == null ? LocalDate.now() : date;
 
         //sql에서 로우마다 형변환 보다 백단에서 형변환시킴
@@ -89,8 +92,17 @@ public class StatisticsService {
         long cancelledOrderCount = list.stream().filter(o -> o.getOrder().getStatus() == OrderStatus.CANCELLED).count();
         long totalQuantity = list.stream().mapToLong(OrderItem::getQuantity).sum();
         long totalAmount = list.stream().mapToLong(OrderItem::getLineAmount).sum();
-        return OrderStatisticsResponse.of(targetDate, orderCount, placedCount, cancelledOrderCount, totalQuantity, totalAmount);
+        return new OrderStatisticsDateResponse(targetDate, orderCount, placedCount, cancelledOrderCount, totalQuantity, totalAmount);
 
 
+    }
+
+// A18 쿼리  > DTO
+    public OrderStatisticsDateResponse findAllByOrderedDateQuery(LocalDate date) {
+        LocalDate targetDate = date == null ? LocalDate.now() : date;
+
+        LocalDateTime start = targetDate.atStartOfDay();
+        LocalDateTime end = targetDate.plusDays(1).atStartOfDay();
+        return orderItemRepository.findAllByOrderedDate2(start, end).orElse(new OrderStatisticsDateResponse(targetDate, 0L, 0L, 0L, 0L, 0L));
     }
 }

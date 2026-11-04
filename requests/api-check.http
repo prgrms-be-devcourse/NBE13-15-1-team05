@@ -110,6 +110,17 @@ Content-Type: application/json
   "price": 11000
 }
 
+### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
+POST http://localhost:8080/api/v1/menus
+Content-Type: application/json
+
+{
+  "name": "Ethiopia Sidamo",
+  "description": "",
+  "categoryId": 1,
+  "price": 11000
+}
+
 
 ### A09 메뉴 일반 수정      PUT    /api/v1/menus/{menuId}                          200 · Menu
 PUT http://localhost:8080/api/v1/menus
@@ -155,6 +166,16 @@ GET http://localhost:8080/api/v1/categories/3/menus
 ### A16 주문 취소           POST   /api/v1/orders/{orderId}/cancel                 200 · 전체 Order
 ### A17 접수일별 주문 통계  GET    /api/v1/statistics/orders?date={date}           200 · OrderStatistics
 ### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus?date={date}            200 · MenuStatistics[]
+GET http://localhost:8080/api/v1/statistics/menus?
+    date=2026-11-04
+
+### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus 쿼리파라미터없어도 가능            200 · MenuStatistics[]
+GET http://localhost:8080/api/v1/statistics/menus
+
+### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus?date={date}   실패 날짜 타입은 정확히 ISO타입으로      200 · MenuStatistics[]
+GET http://localhost:8080/api/v1/statistics/menus?
+    date=2026-11-4
+
 
 ### A19 판매 중 메뉴        GET    /api/v1/menus/available                         200 · Menu[]
 GET http://localhost:8080/api/v1/menus/available

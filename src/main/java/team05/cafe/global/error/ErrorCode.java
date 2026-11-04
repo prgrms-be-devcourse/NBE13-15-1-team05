@@ -30,7 +30,7 @@ public enum ErrorCode {
 
     //메뉴
     NOT_FOUND_MENU(HttpStatus.NOT_FOUND, "MENU_NOT_FOUND", "메뉴를 찾을 수 없습니다."),
-
+    MENU_NO_STOCK(HttpStatus.CONFLICT, "MENU_NOT_FOUND", "재고가 없습니다. "),
     MENU_IN_USE(
             HttpStatus.CONFLICT,
             "MENU_IN_USE",
