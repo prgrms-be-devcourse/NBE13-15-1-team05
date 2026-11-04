@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team05.cafe.domain.order.Sevice.OrderService;
+import team05.cafe.domain.order.service.OrderService;
 import team05.cafe.domain.order.dto.OrderResponse;
 import team05.cafe.domain.order.dto.OrderSummaryResponse;
 import team05.cafe.domain.order.dto.PlaceOrderRequest;
