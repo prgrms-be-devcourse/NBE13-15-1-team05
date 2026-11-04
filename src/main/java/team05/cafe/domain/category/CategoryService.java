@@ -21,7 +21,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponse create(CategoryCreateRequest request) {
         String name = normalizeName(request.name());
-        validateDuplicateName(name, null);
+        validateDuplicateName(name);
 
         Category category = new Category(name);
         categoryRepository.save(category);
@@ -57,13 +57,9 @@ public class CategoryService {
                 .orElseThrow(() ->
                         new BusinessException(ErrorCode.NOT_FOUND_CATEGORY));
 
-        System.out.println("DB 이름: [" + category.getName() + "]");
-        System.out.println("요청 이름: [" + name + "]");
-        System.out.println("이름이 같은가?: " + category.getName().equals(name));
-
         // 현재 이름과 다를 때만 중복 검사
         if (!category.getName().equals(name)) {
-            validateDuplicateName(name, categoryId);
+            validateDuplicateName(name);
         }
 
         category.updateName(name);
@@ -97,13 +93,9 @@ public class CategoryService {
         return name;
     }
 
-    // 다른 카테고리와 이름 중복 검사 (대소문자 구분), excludeId 는 비교 대상에서 제외
-    private void validateDuplicateName(String name, Long excludeId) {
-        boolean duplicated = categoryRepository.findAll().stream()
-                .filter(category -> !category.getId().equals(excludeId)) //자기자신 수정은 200
-                .anyMatch(category -> category.getName().equals(name));
-
-        if (duplicated) {
+    // 다른 카테고리와 이름 중복 검사 (대소문자 구분)
+    private void validateDuplicateName(String name) {
+        if (categoryRepository.existsByNameExactly(name) == 1) {
             throw new BusinessException(ErrorCode.CATEGORY_NAME_DUPLICATED);
         }
     }
