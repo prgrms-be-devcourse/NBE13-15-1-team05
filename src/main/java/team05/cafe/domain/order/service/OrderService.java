@@ -33,6 +33,12 @@ public class OrderService {
 
     @Transactional
     public OrderResponse place(PlaceOrderRequest request){
+        validateEmail(request.email());
+        // 공백제거, 길이검사
+        String address = normalizeAddress(request.address());
+        String postcode = normalizePostcode(request.postcode());
+
+        // 메뉴 중복 검사
         Set<Long> menuIds = new HashSet<>();
         for (PlaceOrderRequest.Item item : request.items()) {
             if (menuIds.contains(item.menuId())) {
@@ -40,7 +46,7 @@ public class OrderService {
             }
             menuIds.add(item.menuId());
         }
-        return createOrder(request.email(), request.address(), request.postcode(), request.items());
+        return createOrder(request.email(), address, postcode, request.items());
     }
 
     private OrderResponse createOrder(String email, String address, String postcode,
@@ -88,7 +94,9 @@ public class OrderService {
         return OrderResponse.from(order, orderItems);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderSummaryResponse> getOrdersByEmail(String email) {
+        validateEmail(email);
         List<Order> orders = orderRepository.findByEmailOrderByCreatedAtDescIdDesc(email);
 
         List<OrderSummaryResponse> responses = new ArrayList<>();
@@ -96,6 +104,30 @@ public class OrderService {
             responses.add(OrderSummaryResponse.from(order));
         }
         return responses;
+    }
+
+    private String normalizeAddress(String rawAddress) {
+        String address = rawAddress.replaceAll("^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "");
+        if (address.isEmpty() || address.length() > 200) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "address", "주소는 1~200자여야 합니다.");
+        }
+        return address;
+    }
+
+    private String normalizePostcode(String rawPostcode) {
+        String postcode = rawPostcode.replaceAll("^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "");
+        if (!postcode.matches("^[0-9]{5}$")) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "postcode", "우편번호는 5자리 숫자여야 합니다.");
+        }
+        return postcode;
+    }
+
+    // 이메일 형식 검사 메서드
+    private void validateEmail(String email) {
+        if (email == null || email.length() > 100
+                || !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+$")) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "email", "이메일 형식을 확인해 주세요.");
+        }
     }
 
 }

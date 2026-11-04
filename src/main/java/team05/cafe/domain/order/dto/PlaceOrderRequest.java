@@ -14,7 +14,8 @@ public record PlaceOrderRequest(
         String email,
 
         @NotNull(message = "주소는 필수입니다.")
-        @Size(min = 1, max = 200, message = "주소는 1~200자여야 합니다.")
+//        @Size(min = 1, max = 200, message = "주소는 1~200자여야 합니다.")
+        // 서비스 레이어에서 앞뒤 공백 제거하고 길이 검사
         String address,
 
         @NotNull(message = "우편번호는 필수입니다.")
