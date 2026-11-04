@@ -44,10 +44,16 @@ public enum ErrorCode {
     ),
 
     //주문
+    ORDER_NOT_FOUND(
+            HttpStatus.CONFLICT,
+            "ORDER_NOT_FOUND",
+            "주문을 찾을 수 없습니다."
+    ),
+
     ADDRESS_MISMATCH(
             HttpStatus.CONFLICT,
             "ADDRESS_MISMATCH",
-            "이메일과 배송일이 같은 기존 주문과 주소, 우편번호가 다릅니다."
+            "같은 이메일과 배송일의 기존 주문과 배송지가 다릅니다."
     ),
 
 

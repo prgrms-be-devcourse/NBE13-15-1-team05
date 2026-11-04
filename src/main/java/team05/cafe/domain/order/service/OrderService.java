@@ -32,7 +32,7 @@ public class OrderService {
     private final Clock clock;
 
     @Transactional
-    public OrderResponse place(PlaceOrderRequest request){
+    public OrderResponse place(PlaceOrderRequest request) {
         validateEmail(request.email());
         // 공백제거, 길이검사
         String address = normalizeAddress(request.address());
@@ -47,6 +47,21 @@ public class OrderService {
             menuIds.add(item.menuId());
         }
         return createOrder(request.email(), address, postcode, request.items());
+    }
+
+    @Transactional
+    public OrderResponse reorder(Long orderId) {
+        Order originalOrder = getOrder(orderId);
+
+        List<OrderItem> originalItems = orderItemRepository.findByOrderIdOrderByIdAsc(orderId);
+        List<PlaceOrderRequest.Item> items = new ArrayList<>();
+        // 리퀘스트의 Item 형식으로 createOrder에 들어가야 하기 때문에 메뉴 id와 수량만 가져옴
+        for (OrderItem item : originalItems) {
+            items.add(new PlaceOrderRequest.Item(item.getMenuId(), item.getQuantity()));
+        }
+
+        return createOrder(originalOrder.getEmail(), originalOrder.getAddress(),
+                originalOrder.getPostcode(), items);
     }
 
     private OrderResponse createOrder(String email, String address, String postcode,
@@ -106,6 +121,13 @@ public class OrderService {
         return responses;
     }
 
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderDetail(Long orderId) {
+        Order order = getOrder(orderId);
+        List<OrderItem> items = orderItemRepository.findByOrderIdOrderByIdAsc(orderId);
+        return OrderResponse.from(order, items);
+    }
+
     private String normalizeAddress(String rawAddress) {
         String address = rawAddress.replaceAll("^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "");
         if (address.isEmpty() || address.length() > 200) {
@@ -130,4 +152,9 @@ public class OrderService {
         }
     }
 
+    // 주문 조회 메서드
+    public Order getOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+    }
 }
