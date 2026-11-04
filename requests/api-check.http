@@ -126,7 +126,26 @@ Content-Type: application/json
 DELETE http://localhost:8080/api/v1/menus/2
 
 ### A11 주문 접수           POST   /api/v1/orders                                  201 · Order
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "email": "name@example.com",
+  "address": "도로명 주소와 상세 주소",
+  "postcode": "12345",
+  "items": [
+    {
+      "menuId": 1,
+      "quantity": 3
+    },
+    {
+      "menuId": 2,
+      "quantity": 2
+    }
+  ]
+}
 ### A12 이메일별 주문       GET    /api/v1/orders?email={email}                    200 · OrderSummary[]
+GET http://localhost:8080/api/v1/orders?email=name@example.com
 ### A13 주문 상세           GET    /api/v1/orders/{orderId}                        200 · Order
 ### A14 배송 묶음           GET    /api/v1/delivery-batches?shippingDate={shippingDate}  200 · DeliveryBatch[]
 

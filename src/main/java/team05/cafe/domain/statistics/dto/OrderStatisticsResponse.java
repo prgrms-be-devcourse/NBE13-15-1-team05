@@ -15,8 +15,27 @@ public record OrderStatisticsResponse(
         long totalQuantity,
         long totalAmount
 ) {
-    /** 주문이 하나도 없는 날짜: 404가 아니라 모든 값이 0인 객체를 반환한다. */
+    /**
+     * 주문이 하나도 없는 날짜: 404가 아니라 모든 값이 0인 객체를 반환한다.
+     */
     public static OrderStatisticsResponse empty(LocalDate date) {
         return new OrderStatisticsResponse(date, 0, 0, 0, 0, 0);
     }
+
+    public static OrderStatisticsResponse of(LocalDate date,
+                                             Long orderCount,
+                                             Long placedOrderCount,
+                                             Long cancelledOrderCount,
+                                             Long totalQuantity,
+                                             Long totalAmount) {
+        return new OrderStatisticsResponse(
+                date,
+                orderCount,
+                placedOrderCount,
+                cancelledOrderCount,
+                totalQuantity,
+                totalAmount
+        );
+    }
+
 }
