@@ -17,6 +17,6 @@ public class TimeConfig {
 
     @Bean
     public Clock clock() {
-        return Clock.system(SEOUL);
+        return Clock.tickSeconds(SEOUL);
     }
 }
