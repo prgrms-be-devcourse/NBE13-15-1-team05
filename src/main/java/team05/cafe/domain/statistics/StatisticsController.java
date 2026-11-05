@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import team05.cafe.domain.statistics.dto.CustomerStatisticsResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsDateResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +24,12 @@ public class StatisticsController {
     @GetMapping("/orders")
     public OrderStatisticsResponse orders(@RequestParam(required = false) String date) {
         return statisticsService.getOrderStatistics(DateParams.parse(date, "date"));
+    }
+
+    // A24: 접수일별 고객 통계
+    @GetMapping("/customers")
+    public List<CustomerStatisticsResponse> customers(@RequestParam(required = false) String date) {
+        return statisticsService.getCustomerStatistics(DateParams.parse(date, "date"));
     }
 
     @GetMapping("/menus")
