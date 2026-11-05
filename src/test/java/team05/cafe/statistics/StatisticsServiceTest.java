@@ -75,8 +75,6 @@ class StatisticsServiceTest {
     }
 
 
-
-
     // ── 테스트 데이터 도우미 ──
 
     private void givenOrdersOn(LocalDate date, Order... orders) {
