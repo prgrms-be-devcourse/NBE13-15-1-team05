@@ -1,3 +1,11 @@
+### ── 이상철(A16, A17, A22, A24) 요청에서 쓰는 변수 ──
+# baseUrl: 백엔드 주소 / orderId: A11 응답의 실제 id로 바꿔서 사용
+# date: 통계를 볼 접수일(오늘 날짜로 바꿔서 사용) / expiredOrderId: 배송일 14:00이 지난 PLACED 주문 id
+@baseUrl = http://127.0.0.1:8080
+@orderId = 1
+@date = 2026-11-05
+@expiredOrderId = 1
+
 @categoryId = 2
 @keyword = nari
 
@@ -105,7 +113,25 @@ GET http://localhost:8080/api/v1/orders?email=name@example.com
 GET http://localhost:8080/api/v1/categories/3/menus
 
 ### A16 주문 취소           POST   /api/v1/orders/{orderId}/cancel                 200 · 전체 Order
+# 실행 순서: A11 주문 접수 → A22 메모 수정 → A16 취소 → A17·A24 통계 확인
+# 준비: A11 응답의 id를 @orderId에 넣는다. 배송일 14:00:00 전에 실행한다.
+# 기대: 200, status=CANCELLED, cancelledAt=취소한 시각, totalAmount·items는 접수 때와 같음
+POST {{baseUrl}}/api/v1/orders/{{orderId}}/cancel
+
+### A16-1 이미 취소한 주문 다시 취소
+# 기대: 200, 기존 주문 그대로 반환 (cancelledAt은 처음 취소한 시각 유지)
+POST {{baseUrl}}/api/v1/orders/{{orderId}}/cancel
+
 ### A17 접수일별 주문 통계  GET    /api/v1/statistics/orders?date={date}           200 · OrderStatistics
+# 준비: @date에 A11로 주문한 날(서울 기준 접수일)을 넣는다.
+# 기대: 200, orderCount = placedOrderCount + cancelledOrderCount
+# 비교: A16으로 취소한 주문은 orderCount·cancelledOrderCount에는 들어가고 totalQuantity·totalAmount에서는 빠짐
+GET {{baseUrl}}/api/v1/statistics/orders?date={{date}}
+
+### A17-1 주문이 없는 날짜
+# 기대: 200, 모든 값이 0인 객체 (404 아님)
+GET {{baseUrl}}/api/v1/statistics/orders?date=2000-01-01
+
 ### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus?date={date}            200 · MenuStatistics[]
 GET http://localhost:8080/api/v1/statistics/menus?
     date=2026-11-04
@@ -128,8 +154,39 @@ GET http://localhost:8080/api/v1/menus/search?keyword=_
 PUT http://localhost:8080/api/v1/menus/1/availability
 
 ### A22 주문 메모 수정      PUT    /api/v1/orders/{orderId}/memo                   200 · 전체 Order
+# 기대: 200, memo가 앞뒤 공백·줄바꿈까지 그대로 저장됨 (다른 필드는 그대로)
+PUT {{baseUrl}}/api/v1/orders/{{orderId}}/memo
+Content-Type: application/json
+
+{
+  "memo": "  문 앞에\n놓아 주세요  "
+}
+
+### A22-1 메모 비우기
+# 기대: 200, memo = ""
+PUT {{baseUrl}}/api/v1/orders/{{orderId}}/memo
+Content-Type: application/json
+
+{
+  "memo": ""
+}
+
 ### A23 재주문              POST   /api/v1/orders/{orderId}/reorder                201 · 새 Order
 ### A24 접수일별 고객 통계  GET    /api/v1/statistics/customers?date={date}        200 · CustomerStatistics[]
+# 기대: 200, 이메일 오름차순(대소문자 구분) 배열
+# 비교: 주문을 모두 취소한 고객도 포함되고 그 고객의 totalQuantity·totalAmount는 0
+GET {{baseUrl}}/api/v1/statistics/customers?date={{date}}
+
+### ── 이상철 담당 오류 요청 (팀 최종 6개를 고를 때 후보) ──
+
+### [오류 400] A17 존재하지 않는 날짜
+# 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
+GET {{baseUrl}}/api/v1/statistics/orders?date=2026-02-30
+
+### [오류 409] A16 취소 마감(배송일 14:00:00)이 지난 주문 취소
+# 준비: 배송일이 이미 지난 PLACED 주문의 id를 @expiredOrderId에 넣는다 (예: 전날 14시 전에 접수한 주문)
+# 기대: 409, code=ORDER_NOT_CANCELLABLE, fieldErrors={}, 주문 상태는 PLACED 그대로
+POST {{baseUrl}}/api/v1/orders/{{expiredOrderId}}/cancel
 
 
 ##################################################################################################################
