@@ -19,15 +19,15 @@ public interface StatisticsOrderRepository extends Repository<Order, Long> {
     List<Order> findByCreatedAtGreaterThanEqualAndCreatedAtLessThan(LocalDateTime start, LocalDateTime end);
 
     @Query("""
-        select new team05.cafe.domain.statistics.dto.MenuStatisticsResponse(
-            m.id, m.name, m.price, sum(oi.quantity), sum(oi.quantity * m.price)
-        )
-        from OrderItem oi
-        join oi.order o
-        join oi.menu m
-        where o.createdAt >= :start and o.createdAt < :end
-        group by m.id, m.name, m.price
-        order by m.id
-        """)
+            select new team05.cafe.domain.statistics.dto.MenuStatisticsResponse(
+                 oi.menu.id , oi.menuName, oi.unitPrice, sum(oi.quantity), sum(oi.quantity * oi.unitPrice)
+            )
+            from OrderItem oi
+            join oi.order o
+            where o.createdAt >= :start and o.createdAt < :end
+            group by oi.menu.id , oi.menuName, oi.unitPrice
+            order by oi.menu.id
+            """)
+    //그당시 가격 메뉴 명으로 통계 menu table join 안해도됨
     List<MenuStatisticsResponse> getMenuStatistics(LocalDateTime start, LocalDateTime end);
 }
