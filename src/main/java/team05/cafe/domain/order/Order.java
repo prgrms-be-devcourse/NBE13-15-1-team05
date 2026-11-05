@@ -77,6 +77,30 @@ public class Order {
         return this.address.equals(address) && this.postcode.equals(postcode);
     }
 
+    // ── A16 주문 취소 / A22 메모 수정 (주문 변경) ──
+
+    /** 취소 마감: 저장된 배송일의 서울 시각 14:00:00. 정각부터는 취소할 수 없다. */
+    public boolean isCancellableAt(LocalDateTime now) {
+        return now.isBefore(this.shippingDate.atTime(SHIPPING_CUTOFF));
+    }
+
+    /**
+     * 주문 취소: 상태와 취소 시각만 바꾸고 주문·항목·금액은 그대로 둔다.
+     * 이미 취소된 주문이면 아무것도 바꾸지 않는다 (최초 cancelledAt 유지).
+     */
+    public void cancel(LocalDateTime now) {
+        if (this.status == OrderStatus.CANCELLED) {
+            return;
+        }
+        this.status = OrderStatus.CANCELLED;
+        this.cancelledAt = now;
+    }
+
+    /** 메모 수정: memo만 바꾼다. 공백·줄바꿈은 그대로 저장하고 ""는 메모 비우기. */
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
     public boolean isPlaced() {
         return this.status == OrderStatus.PLACED;
     }

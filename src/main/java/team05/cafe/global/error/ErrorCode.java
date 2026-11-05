@@ -50,6 +50,12 @@ public enum ErrorCode {
             "주문을 찾을 수 없습니다."
     ),
 
+    ORDER_NOT_CANCELLABLE(
+            HttpStatus.CONFLICT,
+            "ORDER_NOT_CANCELLABLE",
+            "배송일 14:00 이후에는 주문을 취소할 수 없습니다."
+    ),
+
     ADDRESS_MISMATCH(
             HttpStatus.CONFLICT,
             "ADDRESS_MISMATCH",
