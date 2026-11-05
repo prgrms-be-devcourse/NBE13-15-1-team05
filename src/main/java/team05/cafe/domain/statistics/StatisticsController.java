@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team05.cafe.domain.statistics.dto.CustomerStatisticsResponse;
-import team05.cafe.domain.statistics.dto.OrderStatisticsDateResponse;
+import team05.cafe.domain.statistics.dto.MenuStatisticsResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
 import java.time.LocalDate;
@@ -32,9 +32,10 @@ public class StatisticsController {
         return statisticsService.getCustomerStatistics(DateParams.parse(date, "date"));
     }
 
-    @GetMapping("/menus")
-    public ResponseEntity<OrderStatisticsDateResponse> getStatistics(@RequestParam(required = false) LocalDate date) {
-        return ResponseEntity.ok(statisticsService.findAllByOrderedDateQuery(date));
-    }
 
+    // A18
+    @GetMapping("/menus")
+    public ResponseEntity<List<MenuStatisticsResponse>> getStatistics(@RequestParam(required = false) LocalDate date) {
+        return ResponseEntity.ok(statisticsService.getMenuStatistics(date));
+    }
 }

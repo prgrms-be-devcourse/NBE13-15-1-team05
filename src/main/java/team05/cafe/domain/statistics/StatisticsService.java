@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team05.cafe.domain.order.Order;
 import team05.cafe.domain.order.OrderItem;
-import team05.cafe.domain.order.OrderStatus;
 import team05.cafe.domain.statistics.dto.CustomerStatisticsResponse;
-import team05.cafe.domain.statistics.dto.OrderStatisticsDateResponse;
+import team05.cafe.domain.statistics.dto.MenuStatisticsResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
 import java.time.LocalDate;
@@ -86,7 +85,9 @@ public class StatisticsService {
         return result;   // 주문이 없는 날은 빈 배열 []
     }
 
-    /** 고객 한 명의 누적값 (A24) */
+    /**
+     * 고객 한 명의 누적값 (A24)
+     */
     private static class CustomerCounter {
         long orderCount;
         long placedOrderCount;
@@ -125,33 +126,15 @@ public class StatisticsService {
         return items.stream().mapToLong(OrderItem::getLineAmount).sum();
     }
 
-
-//    A18 join fetch > 가공
-    public OrderStatisticsDateResponse findAllByOrderedDate(LocalDate date) {
+    //    A18
+    public List<MenuStatisticsResponse> getMenuStatistics(LocalDate date) {
         LocalDate targetDate = date == null ? LocalDate.now() : date;
 
         //sql에서 로우마다 형변환 보다 백단에서 형변환시킴
         LocalDateTime start = targetDate.atStartOfDay();            // 2026-11-03T00:00:00
         LocalDateTime end = targetDate.plusDays(1).atStartOfDay();  // 2026-11-04T00:00:00
 
-        List<OrderItem> list = orderItemRepository.findAllByOrderedDate(start ,end);
-
-        long orderCount = list.size();
-        long placedCount = list.stream().filter(o -> o.getOrder().getStatus() == OrderStatus.PLACED).count();
-        long cancelledOrderCount = list.stream().filter(o -> o.getOrder().getStatus() == OrderStatus.CANCELLED).count();
-        long totalQuantity = list.stream().mapToLong(OrderItem::getQuantity).sum();
-        long totalAmount = list.stream().mapToLong(OrderItem::getLineAmount).sum();
-        return new OrderStatisticsDateResponse(targetDate, orderCount, placedCount, cancelledOrderCount, totalQuantity, totalAmount);
-
-
+        return orderRepository.getMenuStatistics(start, end);
     }
 
-// A18 쿼리  > DTO
-    public OrderStatisticsDateResponse findAllByOrderedDateQuery(LocalDate date) {
-        LocalDate targetDate = date == null ? LocalDate.now() : date;
-
-        LocalDateTime start = targetDate.atStartOfDay();
-        LocalDateTime end = targetDate.plusDays(1).atStartOfDay();
-        return orderItemRepository.findAllByOrderedDate2(start, end).orElse(new OrderStatisticsDateResponse(targetDate, 0L, 0L, 0L, 0L, 0L));
-    }
 }
