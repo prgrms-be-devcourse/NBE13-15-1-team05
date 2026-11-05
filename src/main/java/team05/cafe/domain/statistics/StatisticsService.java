@@ -6,12 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import team05.cafe.domain.order.Order;
 import team05.cafe.domain.order.OrderItem;
 import team05.cafe.domain.order.OrderStatus;
+import team05.cafe.domain.statistics.dto.CustomerStatisticsResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsDateResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * 접수일별 통계.
@@ -44,6 +49,50 @@ public class StatisticsService {
                 orders.size() - placed,
                 sumQuantity(placedItems),
                 sumAmount(placedItems));
+    }
+
+    // ── A24 접수일별 고객 통계 ──
+    public List<CustomerStatisticsResponse> getCustomerStatistics(LocalDate date) {
+        List<Order> orders = findOrdersReceivedOn(date);
+        List<Order> placedOrders = placedOnly(orders);
+
+        // 주문 ID → 이메일 (주문 항목이 어느 고객 것인지 찾기 위해)
+        Map<Long, String> emailByOrderId = placedOrders.stream()
+                .collect(Collectors.toMap(Order::getId, Order::getEmail));
+
+        // 이메일별 누적값 (TreeMap: 이메일 오름차순, 대소문자 구분)
+        Map<String, CustomerCounter> byEmail = new TreeMap<>();
+        for (Order order : orders) {
+            CustomerCounter counter = byEmail.computeIfAbsent(order.getEmail(), k -> new CustomerCounter());
+            counter.orderCount++;
+            if (order.isPlaced()) {
+                counter.placedOrderCount++;
+            } else {
+                counter.cancelledOrderCount++;
+            }
+        }
+        // 수량·금액은 PLACED 주문의 항목만 더한다
+        for (OrderItem item : findItemsOf(placedOrders)) {
+            CustomerCounter counter = byEmail.get(emailByOrderId.get(item.getOrder().getId()));
+            counter.totalQuantity += item.getQuantity();
+            counter.totalAmount += item.getLineAmount();
+        }
+
+        // 주문을 모두 취소한 고객도 포함된다 (수량·금액 0)
+        List<CustomerStatisticsResponse> result = new ArrayList<>();
+        byEmail.forEach((email, c) -> result.add(new CustomerStatisticsResponse(
+                date, email, c.orderCount, c.placedOrderCount, c.cancelledOrderCount,
+                c.totalQuantity, c.totalAmount)));
+        return result;   // 주문이 없는 날은 빈 배열 []
+    }
+
+    /** 고객 한 명의 누적값 (A24) */
+    private static class CustomerCounter {
+        long orderCount;
+        long placedOrderCount;
+        long cancelledOrderCount;
+        long totalQuantity;
+        long totalAmount;
     }
 
     // ── 공통 도우미 ──
