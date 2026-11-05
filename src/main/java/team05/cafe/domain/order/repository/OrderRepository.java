@@ -13,4 +13,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByEmailAndShippingDateAndStatus(String email, LocalDate shippingDate, OrderStatus status);
     // WHERE email = ? AND shipping_date = ? AND status = ?
+
+    List<Order> findByShippingDateAndStatus(LocalDate shippingDate, OrderStatus status);
+    // WHERE shipping_date = ? AND status = ?
 }
