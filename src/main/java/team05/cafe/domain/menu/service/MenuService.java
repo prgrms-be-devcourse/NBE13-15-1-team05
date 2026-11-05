@@ -12,6 +12,7 @@ import team05.cafe.domain.menu.MenuRepository;
 import team05.cafe.domain.menu.dto.MenuCreateRequest;
 import team05.cafe.domain.menu.dto.MenuResponse;
 import team05.cafe.domain.menu.dto.MenuUpdateRequest;
+import team05.cafe.domain.order.repository.OrderItemRepository;
 import team05.cafe.global.error.BusinessException;
 import team05.cafe.global.error.ErrorCode;
 import team05.cafe.global.redis.CacheNames;
@@ -22,6 +23,7 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final CategoryRepository categoryRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @CacheEvict(cacheNames = CacheNames.MENUS , key = "'all'")
     @Transactional
@@ -46,6 +48,11 @@ public class MenuService {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_MENU)
         );
+
+        boolean hasOrderItem= orderItemRepository.existsByMenu_Id(menu.getId()) ;
+        if(hasOrderItem){
+            throw new BusinessException(ErrorCode.MENU_IN_USE);
+        }
         menuRepository.delete(menu);
     }
 
