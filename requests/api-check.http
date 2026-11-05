@@ -33,7 +33,6 @@ Content-Type: application/json
   "name": "coffee beans"
 }
 
-
 ### A04 카테고리 수정
 PUT http://localhost:8080/api/v1/categories/{{categoryId}}
 Content-Type: application/json
@@ -42,22 +41,8 @@ Content-Type: application/json
   "name": "Specialty Coffee Beans"
 }
 
-
 ### A05 카테고리 삭제
 DELETE http://localhost:8080/api/v1/categories/4
-
-### 추가 테스트
-### ID 범위 오류 → 400
-GET http://localhost:8080/api/v1/categories/0
-
-### ID 자료형 오류 → 400
-GET http://localhost:8080/api/v1/categories/abc
-
-### 검색어 누락 → 400
-GET http://localhost:8080/api/v1/menus/search
-
-### 존재하지 않는 카테고리 → 404
-GET http://localhost:8080/api/v1/categories/999999
 
 ### A06 전체 메뉴           GET    /api/v1/menus                                   200 · Menu[]
 GET http://localhost:8080/api/v1/menus
@@ -75,52 +60,6 @@ Content-Type: application/json
   "categoryId": 2,
   "price": 5000
 }
-
-### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
-POST http://localhost:8080/api/v1/menus
-Content-Type: application/json
-
-{
-  "name": "Brazil Serra Do Caparaó",
-  "description": "브라질 세하 두 카파라오 원두를 담은 커피빈 패키지입니다.",
-  "categoryId": 1,
-  "price": 7000
-}
-
-### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
-POST http://localhost:8080/api/v1/menus
-Content-Type: application/json
-
-{
-  "name": "Columbia Quindío (White Wine Extended Fermentation)",
-  "description": "콜롬비아 킨디오 원두를 담은 커피빈 패키지입니다.",
-  "categoryId": 1,
-  "price": 9000
-}
-
-
-### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
-POST http://localhost:8080/api/v1/menus
-Content-Type: application/json
-
-{
-  "name": "Ethiopia Sidamo",
-  "description": "에티오피아 시다모 원두를 담은 커피빈 패키지입니다.",
-  "categoryId": 1,
-  "price": 11000
-}
-
-### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
-POST http://localhost:8080/api/v1/menus
-Content-Type: application/json
-
-{
-  "name": "Ethiopia Sidamo",
-  "description": "",
-  "categoryId": 1,
-  "price": 11000
-}
-
 
 ### A09 메뉴 일반 수정      PUT    /api/v1/menus/{menuId}                          200 · Menu
 PUT http://localhost:8080/api/v1/menus
@@ -188,3 +127,33 @@ PUT http://localhost:8080/api/v1/menus/1/availability
 ### A22 주문 메모 수정      PUT    /api/v1/orders/{orderId}/memo                   200 · 전체 Order
 ### A23 재주문              POST   /api/v1/orders/{orderId}/reorder                201 · 새 Order
 ### A24 접수일별 고객 통계  GET    /api/v1/statistics/customers?date={date}        200 · CustomerStatistics[]
+
+
+##################################################################################################################
+### 실패 케이스
+
+### ID 범위 오류 → 400
+GET http://localhost:8080/api/v1/categories/0
+
+### ID 자료형 오류 → 400
+GET http://localhost:8080/api/v1/categories/abc
+
+### 검색어 누락 → 400
+GET http://localhost:8080/api/v1/menus/search
+
+### 존재하지 않는 카테고리 → 404
+GET http://localhost:8080/api/v1/categories/999999
+
+### A03 카테고리명 중복 등록 → 409
+POST http://localhost:8080/api/v1/categories
+Content-Type: application/json
+
+{
+  "name": "Coffee Beans"
+}
+
+### 카테고리 삭제 409
+DELETE http://localhost:8080/api/v1/categories/1
+
+### 메뉴 삭제  409
+DELETE http://localhost:8080/api/v1/menus/1
