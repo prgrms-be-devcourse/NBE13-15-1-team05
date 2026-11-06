@@ -15,6 +15,7 @@ import team05.cafe.global.error.ErrorCode;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -47,7 +48,8 @@ class OrderChangeServiceTest {
 
         assertThat(order.getShippingDate()).isEqualTo(LocalDate.of(2026, 11, 3));
         assertThat(result.status()).isEqualTo(OrderStatus.CANCELLED);
-        assertThat(result.cancelledAt()).isEqualTo(now);
+        assertThat(order.getCancelledAt()).isEqualTo(now);                    // DB에는 서울 시각 그대로
+        assertThat(result.cancelledAt()).isEqualTo(seoul(now));               // 응답은 +09:00 오프셋 포함
         assertThat(result.totalAmount()).isEqualTo(order.getTotalAmount());   // 금액은 그대로
     }
 
@@ -66,14 +68,15 @@ class OrderChangeServiceTest {
     @Test
     @DisplayName("A16: 이미 취소된 주문은 마감이 지나도 200, 최초 cancelledAt을 유지한다")
     void cancel_alreadyCancelled() {
-        givenOrder(1L);
+        Order order = givenOrder(1L);
         LocalDateTime firstCancel = LocalDateTime.of(2026, 11, 3, 11, 0);
         serviceAt(firstCancel).cancel(1L);
 
         OrderResponse again = serviceAt(LocalDateTime.of(2026, 11, 5, 9, 0)).cancel(1L);   // 마감 이후 재취소
 
         assertThat(again.status()).isEqualTo(OrderStatus.CANCELLED);
-        assertThat(again.cancelledAt()).isEqualTo(firstCancel);
+        assertThat(order.getCancelledAt()).isEqualTo(firstCancel);
+        assertThat(again.cancelledAt()).isEqualTo(seoul(firstCancel));
     }
 
     @Test
@@ -96,6 +99,11 @@ class OrderChangeServiceTest {
         when(orderService.getOrder(id)).thenReturn(order);
         when(orderItemRepository.findByOrderIdOrderByIdAsc(anyLong())).thenReturn(List.of());
         return order;
+    }
+
+    /** 응답에 쓰이는 서울 시각(+09:00) 표현 */
+    private static OffsetDateTime seoul(LocalDateTime seoulTime) {
+        return seoulTime.atZone(SEOUL).toOffsetDateTime();
     }
 
     /** 지정한 서울 시각에 멈춘 시계를 넣은 서비스 */
