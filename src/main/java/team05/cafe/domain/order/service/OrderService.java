@@ -15,6 +15,7 @@ import team05.cafe.domain.order.repository.OrderItemRepository;
 import team05.cafe.domain.order.repository.OrderRepository;
 import team05.cafe.global.error.BusinessException;
 import team05.cafe.global.error.ErrorCode;
+import team05.cafe.global.util.TextNormalizer;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -129,15 +130,11 @@ public class OrderService {
     }
 
     private String normalizeAddress(String rawAddress) {
-        String address = rawAddress.replaceAll("^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "");
-        if (address.isEmpty() || address.length() > 200) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT, "address", "주소는 1~200자여야 합니다.");
-        }
-        return address;
+        return TextNormalizer.trimAndCheckLength(rawAddress, "address", 1, 200, "주소는 1~200자여야 합니다.");
     }
 
     private String normalizePostcode(String rawPostcode) {
-        String postcode = rawPostcode.replaceAll("^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "");
+        String postcode = TextNormalizer.trimEdges(rawPostcode);
         if (!postcode.matches("^[0-9]{5}$")) {
             throw new BusinessException(ErrorCode.INVALID_INPUT, "postcode", "우편번호는 5자리 숫자여야 합니다.");
         }
