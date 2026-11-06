@@ -10,7 +10,6 @@ import team05.cafe.domain.statistics.dto.CustomerStatisticsResponse;
 import team05.cafe.domain.statistics.dto.MenuStatisticsResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,7 +34,7 @@ public class StatisticsController {
 
     // A18
     @GetMapping("/menus")
-    public ResponseEntity<List<MenuStatisticsResponse>> getStatistics(@RequestParam(required = false) LocalDate date) {
-        return ResponseEntity.ok(statisticsService.getMenuStatistics(date));
+    public ResponseEntity<List<MenuStatisticsResponse>> getStatistics(@RequestParam(required = false) String date) {
+        return ResponseEntity.ok(statisticsService.getMenuStatistics(DateParams.parse(date, "date")));
     }
 }

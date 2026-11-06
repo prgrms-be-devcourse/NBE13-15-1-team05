@@ -128,11 +128,10 @@ public class StatisticsService {
 
     //    A18
     public List<MenuStatisticsResponse> getMenuStatistics(LocalDate date) {
-        LocalDate targetDate = date == null ? LocalDate.now() : date;
 
         //sql에서 로우마다 형변환 보다 백단에서 형변환시킴
-        LocalDateTime start = targetDate.atStartOfDay();            // 2026-11-03T00:00:00
-        LocalDateTime end = targetDate.plusDays(1).atStartOfDay();  // 2026-11-04T00:00:00
+        LocalDateTime start = date.atStartOfDay();            // 2026-11-03T00:00:00
+        LocalDateTime end = date.plusDays(1).atStartOfDay();  // 2026-11-04T00:00:00
 
         return orderRepository.getMenuStatistics(start, end);
     }

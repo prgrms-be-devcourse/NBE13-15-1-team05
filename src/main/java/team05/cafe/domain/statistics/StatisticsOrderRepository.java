@@ -26,7 +26,7 @@ public interface StatisticsOrderRepository extends Repository<Order, Long> {
             join oi.order o
             where o.createdAt >= :start and o.createdAt < :end
             group by oi.menu.id , oi.menuName, oi.unitPrice
-            order by oi.menu.id
+            order by oi.menu.id , oi.unitPrice , oi.menuName
             """)
     //그당시 가격 메뉴 명으로 통계 menu table join 안해도됨
     List<MenuStatisticsResponse> getMenuStatistics(LocalDateTime start, LocalDateTime end);
