@@ -29,6 +29,5 @@ public interface StatisticsOrderRepository extends Repository<Order, Long> {
             group by oi.menu.id , oi.menuName, oi.unitPrice
             order by oi.menu.id , oi.unitPrice , oi.menuName
             """)
-    //그당시 가격 메뉴 명으로 통계 menu table join 안해도됨
     List<MenuStatisticsResponse> getMenuStatistics(LocalDateTime start, LocalDateTime end, OrderStatus status);
 }

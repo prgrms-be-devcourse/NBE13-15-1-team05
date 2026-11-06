@@ -95,8 +95,9 @@ public class MenuController {
      * 특정번호 상품 판매 유.무 수정
      */
     @PutMapping("/{menuId}/availability")
-    public ResponseEntity<MenuResponse> updateMenuAvailability(@PathVariable @Positive Long menuId, @RequestBody MenuAvailabilityRequest req) {
-        return ResponseEntity.ok(menuService.changeAvailability(menuId,req));
+    public ResponseEntity<MenuResponse> updateMenuAvailability(@PathVariable @Positive Long menuId,
+                                                               @RequestBody MenuAvailabilityRequest req) {
+        return ResponseEntity.ok(menuService.changeAvailability(menuId, req.validAvailable()));
     }
 
     /**

@@ -1,6 +1,5 @@
 package team05.cafe.domain.menu.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import team05.cafe.domain.category.Category;
 import team05.cafe.domain.category.CategoryRepository;
 import team05.cafe.domain.menu.Menu;
 import team05.cafe.domain.menu.MenuRepository;
-import team05.cafe.domain.menu.dto.MenuAvailabilityRequest;
 import team05.cafe.domain.menu.dto.MenuCreateRequest;
 import team05.cafe.domain.menu.dto.MenuResponse;
 import team05.cafe.domain.menu.dto.MenuUpdateRequest;
@@ -28,7 +26,7 @@ public class MenuService {
 
     @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
-    public MenuResponse create(@Valid MenuCreateRequest req) {
+    public MenuResponse create(MenuCreateRequest req) {
         Category category = categoryRepository.findById(req.categoryId()).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_CATEGORY)
         );
@@ -61,7 +59,7 @@ public class MenuService {
 
     @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
-    public MenuResponse update(Long menuId, @Valid MenuUpdateRequest req) {
+    public MenuResponse update(Long menuId, MenuUpdateRequest req) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_MENU)
         );
@@ -83,12 +81,12 @@ public class MenuService {
 
     @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
-    public MenuResponse changeAvailability(@Valid Long menuId, MenuAvailabilityRequest req) {
+    public MenuResponse changeAvailability(Long menuId, boolean available) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_MENU)
         );
 
-        menu.changeAvailability(req.validAvailable());
+        menu.changeAvailability(available);
 
         return MenuResponse.from(menu);
     }

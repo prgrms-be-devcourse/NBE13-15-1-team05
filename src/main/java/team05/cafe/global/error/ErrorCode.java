@@ -36,11 +36,6 @@ public enum ErrorCode {
             "MENU_IN_USE",
             "주문에 사용된 메뉴는 삭제할 수 없습니다."
     ),
-    MENU_INVALID_AVAILABLE(
-            HttpStatus.BAD_REQUEST,
-            "MENU_INVALID_AVAILABLE",
-            "true / false 여야 합니다."
-    ),
 
     MENU_UNAVAILABLE(
             HttpStatus.CONFLICT,

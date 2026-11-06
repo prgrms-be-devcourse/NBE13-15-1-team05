@@ -7,7 +7,7 @@ public record MenuAvailabilityRequest(Object available) {
 
     public boolean validAvailable() {
         if (!(available instanceof Boolean value)) {
-            throw new BusinessException(ErrorCode.MENU_INVALID_AVAILABLE);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "available", "판매 여부는 true 또는 false여야 합니다.");
         }
         return value;
     }
