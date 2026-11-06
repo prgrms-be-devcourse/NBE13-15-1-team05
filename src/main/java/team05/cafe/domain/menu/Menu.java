@@ -29,7 +29,7 @@ public class Menu {
     private boolean available = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "category_id")
+    @JoinColumn(nullable = false, name = "category_id", foreignKey = @ForeignKey(name = "fk_menu_category"))
     public Category category;
 
     @Builder

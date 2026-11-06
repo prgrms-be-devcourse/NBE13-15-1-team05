@@ -41,7 +41,6 @@ public class CacheConfig {
         return objectMapper.getTypeFactory().constructCollectionType(List.class, elementType);
     }
 
-
     //단건
     private static JavaType typeOf(ObjectMapper objectMapper, Class<?> type) {
         return objectMapper.constructType(type);

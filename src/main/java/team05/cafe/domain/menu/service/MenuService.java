@@ -25,7 +25,7 @@ public class MenuService {
     private final CategoryRepository categoryRepository;
     private final OrderItemRepository orderItemRepository;
 
-    @CacheEvict(cacheNames = CacheNames.MENUS , key = "'all'")
+    @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
     public MenuResponse create(@Valid MenuCreateRequest req) {
         Category category = categoryRepository.findById(req.categoryId()).orElseThrow(
