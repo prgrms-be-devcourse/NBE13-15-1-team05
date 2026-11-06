@@ -45,7 +45,7 @@ public enum ErrorCode {
 
     //주문
     ORDER_NOT_FOUND(
-            HttpStatus.CONFLICT,
+            HttpStatus.NOT_FOUND,
             "ORDER_NOT_FOUND",
             "주문을 찾을 수 없습니다."
     ),
@@ -53,7 +53,7 @@ public enum ErrorCode {
     ORDER_NOT_CANCELLABLE(
             HttpStatus.CONFLICT,
             "ORDER_NOT_CANCELLABLE",
-            "배송일 14:00 이후에는 주문을 취소할 수 없습니다."
+            "배송 대상일 14시 전의 접수 상태 주문만 취소할 수 있습니다."
     ),
 
     ADDRESS_MISMATCH(

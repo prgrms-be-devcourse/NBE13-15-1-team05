@@ -6,6 +6,7 @@ import team05.cafe.domain.order.OrderStatus;
 import team05.cafe.global.config.TimeConfig;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,19 @@ public record OrderResponse(
                 order.getEmail(),
                 order.getAddress(),
                 order.getPostcode(),
-                order.getCreatedAt().atZone(TimeConfig.SEOUL).toOffsetDateTime(),
+                toSeoulTime(order.getCreatedAt()),
                 order.getShippingDate(),
                 order.getTotalAmount(),
                 items,
                 order.getStatus(),
-                order.getCancelledAt().atZone(TimeConfig.SEOUL).toOffsetDateTime(),
+                toSeoulTime(order.getCancelledAt()),
                 order.getMemo());
+    }
+
+    private static OffsetDateTime toSeoulTime(LocalDateTime dateTime){
+        if(dateTime==null){
+            return null;
+        }
+        return dateTime.atZone(TimeConfig.SEOUL).toOffsetDateTime();
     }
 }
