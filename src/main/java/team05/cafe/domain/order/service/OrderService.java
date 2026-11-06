@@ -116,6 +116,9 @@ public class OrderService {
 
         List<OrderSummaryResponse> responses = new ArrayList<>();
         for (Order order : orders) {
+            if(!order.getEmail().equals(email)){
+                continue;
+            }
             responses.add(OrderSummaryResponse.from(order));
         }
         return responses;
