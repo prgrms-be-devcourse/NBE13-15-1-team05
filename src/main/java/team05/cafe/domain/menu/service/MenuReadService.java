@@ -12,6 +12,7 @@ import team05.cafe.domain.menu.dto.MenuResponse;
 import team05.cafe.global.error.BusinessException;
 import team05.cafe.global.error.ErrorCode;
 import team05.cafe.global.redis.CacheNames;
+import team05.cafe.global.util.TextNormalizer;
 
 import java.util.List;
 
@@ -66,15 +67,7 @@ public class MenuReadService {
     //A20
     public List<MenuResponse> findByNameContaining(String keyword) {
 
-        String name = keyword.replaceAll("^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "");
-
-        if (name.isEmpty() || name.length() > 100) {
-            throw new BusinessException(
-                    ErrorCode.INVALID_INPUT,
-                    "keyword",
-                    "검색어는 1~100자여야 합니다."
-            );
-        }
+        String name = TextNormalizer.trimAndCheckLength(keyword, "keyword", 1, 100, "검색어는 1~100자여야 합니다.");
 
         return menuRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
                 .stream()

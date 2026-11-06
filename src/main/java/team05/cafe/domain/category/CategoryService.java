@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import team05.cafe.domain.menu.MenuRepository;
 import team05.cafe.global.error.BusinessException;
 import team05.cafe.global.error.ErrorCode;
+import team05.cafe.global.util.TextNormalizer;
 
 import java.util.List;
 
@@ -82,15 +83,7 @@ public class CategoryService {
 
     // 양끝 공백 제거 후 길이(1~30자) 검사
     private String normalizeName(String rawName) {
-        String name = rawName.replaceAll("^[ \\t\\r\\n]+|[ \\t\\r\\n]+$", "");
-        if (name.isEmpty() || name.length() > 30) {
-            throw new BusinessException(
-                    ErrorCode.INVALID_INPUT,
-                    "name",
-                    "카테고리 이름은 1~30자여야 합니다."
-            );
-        }
-        return name;
+        return TextNormalizer.trimAndCheckLength(rawName, "name", 1, 30, "카테고리 이름은 1~30자여야 합니다.");
     }
 
     // 다른 카테고리와 이름 중복 검사 (대소문자 구분)
