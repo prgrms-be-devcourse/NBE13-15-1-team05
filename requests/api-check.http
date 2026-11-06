@@ -1,6 +1,3 @@
-### ── 이상철(A16, A17, A22, A24) 요청에서 쓰는 변수 ──
-# baseUrl: 백엔드 주소 / orderId: A11 응답의 실제 id로 바꿔서 사용
-# date: 통계를 볼 접수일(오늘 날짜로 바꿔서 사용) / expiredOrderId: 배송일 14:00이 지난 PLACED 주문 id
 ###############################################################################
 # Team05 Cafe — API 확인 요청 (A01~A24 정상 요청 + 오류 요청)
 #
@@ -27,21 +24,12 @@
 @newCategoryId = 3
 @newMenuId = 5
 @orderId = 1
-@date = 2026-11-05
-@expiredOrderId = 1
-
-@categoryId = 2
-@keyword = nari
-
-@email = name@example.com
 @shippingDate = 2026-11-06
 @date = 2026-11-06
 # expiredOrderId: 배송일 14:00이 이미 지난 PLACED 주문 id (오류 요청 409 확인용)
 @expiredOrderId = 1
 
 
-### A01 카테고리 목록
-GET http://localhost:8080/api/v1/categories
 ###############################################################################
 # 카테고리 A01~A05
 ###############################################################################
@@ -50,8 +38,6 @@ GET http://localhost:8080/api/v1/categories
 # 기대: 200, ID 오름차순 [ {id:1, 싱글오리진}, {id:2, 블렌드} ]
 GET {{baseUrl}}/api/v1/categories
 
-### A02 카테고리 상세
-GET http://localhost:8080/api/v1/categories/1
 ### A02 카테고리 상세 — GET /api/v1/categories/{categoryId} → 200 Category
 # 기대: 200, {id:1, name:"싱글오리진"}
 GET {{baseUrl}}/api/v1/categories/{{categoryId}}
@@ -62,8 +48,6 @@ GET {{baseUrl}}/api/v1/categories/{{categoryId}}
 POST {{baseUrl}}/api/v1/categories
 Content-Type: application/json
 
-### A03 카테고리 등록
-POST http://localhost:8080/api/v1/categories
 {
   "name": "Decaf"
 }
@@ -74,24 +58,18 @@ POST {{baseUrl}}/api/v1/categories
 Content-Type: application/json
 
 {
-  "name": "Coffee Beans"
   "name": "  Decaf  "
 }
 
-### A03-1 공백 제거 후 중복 검사
-POST http://localhost:8080/api/v1/categories
 ### A03-2 대소문자 구분 검사
 # 기대: 201 (대소문자가 다르면 다른 이름으로 본다)
 POST {{baseUrl}}/api/v1/categories
 Content-Type: application/json
 
 {
-  "name": "  Coffee Beans  "
   "name": "decaf"
 }
 
-### A03-2: 대소문자 구분 검사
-POST http://localhost:8080/api/v1/categories
 ### A04 카테고리 수정 — PUT /api/v1/categories/{categoryId} → 200 Category
 # 준비: A03에서 만든 카테고리
 # 기대: 200, name="Decaf Blend"
@@ -99,12 +77,9 @@ PUT {{baseUrl}}/api/v1/categories/{{newCategoryId}}
 Content-Type: application/json
 
 {
-  "name": "coffee beans"
   "name": "Decaf Blend"
 }
 
-### A04 카테고리 수정
-PUT http://localhost:8080/api/v1/categories/{{categoryId}}
 ### A05 카테고리 삭제 — DELETE /api/v1/categories/{categoryId} → 204
 # 준비: A03에서 만든 카테고리 (소속 메뉴 없음)
 # 기대: 204, 빈 본문
@@ -130,24 +105,12 @@ POST {{baseUrl}}/api/v1/menus
 Content-Type: application/json
 
 {
-  "name": "Specialty Coffee Beans"
   "categoryId": 2,
   "name": "House Blend",
   "price": 6000,
   "description": "블렌드 원두 패키지입니다."
 }
 
-### A05 카테고리 삭제
-DELETE http://localhost:8080/api/v1/categories/4
-
-### A06 전체 메뉴           GET    /api/v1/menus                                   200 · Menu[]
-GET http://localhost:8080/api/v1/menus
-
-### A07 메뉴 상세           GET    /api/v1/menus/{menuId}                          200 · Menu
-GET http://localhost:8080/api/v1/menus/1
-
-### A08 메뉴 등록           POST   /api/v1/menus                                   201 · Menu
-POST http://localhost:8080/api/v1/menus
 ### A09 메뉴 일반 수정 — PUT /api/v1/menus/{menuId} → 200 Menu
 # 준비: A08에서 만든 메뉴
 # 기대: 200, name="House Blend Dark", price=6500, available은 기존 값(true) 유지
@@ -155,17 +118,12 @@ PUT {{baseUrl}}/api/v1/menus/{{newMenuId}}
 Content-Type: application/json
 
 {
-  "name": "Columbia Nariñó",
-  "description": "콜롬비아 나리뇨 원두를 담은 커피빈 패키지입니다.",
   "categoryId": 2,
-  "price": 5000
   "name": "House Blend Dark",
   "price": 6500,
   "description": "다크 로스팅 블렌드 원두 패키지입니다."
 }
 
-### A09 메뉴 일반 수정      PUT    /api/v1/menus/{menuId}                          200 · Menu
-PUT http://localhost:8080/api/v1/menus
 ### A10 메뉴 삭제 — DELETE /api/v1/menus/{menuId} → 204
 # 준비: A08에서 만든 메뉴 (주문에 쓰인 적 없음)
 # 기대: 204, 빈 본문
@@ -194,27 +152,15 @@ PUT {{baseUrl}}/api/v1/menus/{{toggleMenuId}}/availability
 Content-Type: application/json
 
 {
-  "name": "ice americano",
-  "description": "코리아 전통 커피",
-  "categoryId": 1,
-  "price": 2000
   "available": false
 }
 
-### A10 메뉴 삭제           DELETE /api/v1/menus/{menuId}                          204 · 빈 본문
-DELETE http://localhost:8080/api/v1/menus/2
-
-### A11 주문 접수           POST   /api/v1/orders                                  201 · Order
-POST http://localhost:8080/api/v1/orders
 ### A21-1 판매 재개 (원래대로 되돌리기)
 # 기대: 200, available=true
 PUT {{baseUrl}}/api/v1/menus/{{toggleMenuId}}/availability
 Content-Type: application/json
 
 {
-  "email": "name@example.com",
-  "address": "도로명 주소와 상세 주소",
-  "postcode": "02345",
   "available": true
 }
 
@@ -235,87 +181,23 @@ Content-Type: application/json
   "address": "서울시 실습로 10 101호",
   "postcode": "01234",
   "items": [
-    {
-      "menuId": 1,
-      "quantity": 3
-    },
-    {
-      "menuId": 2,
-      "quantity": 2
-    }
     { "menuId": 1, "quantity": 2 },
     { "menuId": 2, "quantity": 1 }
   ]
 }
 
-### A12 이메일별 주문       GET    /api/v1/orders?email={email}                    200 · OrderSummary[]
-GET http://localhost:8080/api/v1/orders?email={{email}}
-
-### A13 주문 상세           GET    /api/v1/orders/{orderId}                        200 · Order
-GET http://localhost:8080//api/v1/orders/{{orderId}}
-
-### A14 배송 묶음           GET    /api/v1/delivery-batches?shippingDate={shippingDate}  200 · DeliveryBatch[]
-GET http://localhost:8080//api/v1/delivery-batches?shippingDate={{shippingDate}}
 ### A12 이메일별 주문 — GET /api/v1/orders?email={email} → 200 OrderSummary[]
 # 기대: 200, [ {id:@orderId, totalAmount:17000, status:PLACED} ] (접수 시각 내림차순)
 GET {{baseUrl}}/api/v1/orders?email={{email}}
 
-### A15 카테고리별 메뉴     GET    /api/v1/categories/{categoryId}/menus           200 · Menu[]
-GET http://localhost:8080/api/v1/categories/3/menus
 ### A13 주문 상세 — GET /api/v1/orders/{orderId} → 200 Order
 # 기대: 200, A11 응답과 같은 내용
 GET {{baseUrl}}/api/v1/orders/{{orderId}}
 
-### A16 주문 취소           POST   /api/v1/orders/{orderId}/cancel                 200 · 전체 Order
-# 실행 순서: A11 주문 접수 → A22 메모 수정 → A16 취소 → A17·A24 통계 확인
-# 준비: A11 응답의 id를 @orderId에 넣는다. 배송일 14:00:00 전에 실행한다.
-# 기대: 200, status=CANCELLED, cancelledAt=취소한 시각, totalAmount·items는 접수 때와 같음
-POST {{baseUrl}}/api/v1/orders/{{orderId}}/cancel
 ### A14 배송 묶음 — GET /api/v1/delivery-batches?shippingDate={shippingDate} → 200 DeliveryBatch[]
 # 기대: 200, buyer@example.com 묶음 1개, orderIds=[@orderId], totalQuantity=3, totalAmount=17000
 GET {{baseUrl}}/api/v1/delivery-batches?shippingDate={{shippingDate}}
 
-### A16-1 이미 취소한 주문 다시 취소
-# 기대: 200, 기존 주문 그대로 반환 (cancelledAt은 처음 취소한 시각 유지)
-POST {{baseUrl}}/api/v1/orders/{{orderId}}/cancel
-
-### A17 접수일별 주문 통계  GET    /api/v1/statistics/orders?date={date}           200 · OrderStatistics
-# 준비: @date에 A11로 주문한 날(서울 기준 접수일)을 넣는다.
-# 기대: 200, orderCount = placedOrderCount + cancelledOrderCount
-# 비교: A16으로 취소한 주문은 orderCount·cancelledOrderCount에는 들어가고 totalQuantity·totalAmount에서는 빠짐
-GET {{baseUrl}}/api/v1/statistics/orders?date={{date}}
-
-### A17-1 주문이 없는 날짜
-# 기대: 200, 모든 값이 0인 객체 (404 아님)
-GET {{baseUrl}}/api/v1/statistics/orders?date=2000-01-01
-
-### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus?date={date}            200 · MenuStatistics[]
-GET http://localhost:8080/api/v1/statistics/menus?
-    date=2026-11-04
-
-### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus 쿼리파라미터없어도 가능            200 · MenuStatistics[]
-GET http://localhost:8080/api/v1/statistics/menus
-
-### A18 접수일별 메뉴 통계  GET    /api/v1/statistics/menus?date={date}   실패 날짜 타입은 정확히 ISO타입으로      200 · MenuStatistics[]
-GET http://localhost:8080/api/v1/statistics/menus?
-    date=2026-11-4
-
-
-### A19 판매 중 메뉴        GET    /api/v1/menus/available                         200 · Menu[]
-GET http://localhost:8080/api/v1/menus/available
-
-### A20 메뉴명 검색         GET    /api/v1/menus/search?keyword={keyword}          200 · Menu[]
-GET http://localhost:8080/api/v1/menus/search?keyword=_
-
-### A21 판매 여부 변경      PUT    /api/v1/menus/{menuId}/availability             200 · 전체 Menu
-PUT http://localhost:8080/api/v1/menus/1/availability
-Content-Type: application/json
-
-{
-  "available": true
-}
-
-### A22 주문 메모 수정      PUT    /api/v1/orders/{orderId}/memo                   200 · 전체 Order
 ### A22 주문 메모 수정 — PUT /api/v1/orders/{orderId}/memo → 200 Order
 # 기대: 200, memo가 앞뒤 공백·줄바꿈까지 그대로 저장됨 (다른 필드는 그대로)
 PUT {{baseUrl}}/api/v1/orders/{{orderId}}/memo
@@ -326,7 +208,6 @@ Content-Type: application/json
 }
 
 ### A22-1 메모 비우기
-# 기대: 200, memo = ""
 # 기대: 200, memo=""
 PUT {{baseUrl}}/api/v1/orders/{{orderId}}/memo
 Content-Type: application/json
@@ -335,8 +216,6 @@ Content-Type: application/json
   "memo": ""
 }
 
-### A23 재주문              POST   /api/v1/orders/{orderId}/reorder                201 · 새 Order
-POST http://localhost:8080/api/v1/orders/{{orderId}}/reorder
 ### A16 주문 취소 — POST /api/v1/orders/{orderId}/cancel → 200 Order
 # 준비: 배송일 14:00:00 전에 실행
 # 기대: 200, status=CANCELLED, cancelledAt=취소한 시각, totalAmount·items는 접수 때와 같음
@@ -346,9 +225,6 @@ POST {{baseUrl}}/api/v1/orders/{{orderId}}/cancel
 # 기대: 200, 기존 주문 그대로 (cancelledAt은 처음 취소한 시각 유지)
 POST {{baseUrl}}/api/v1/orders/{{orderId}}/cancel
 
-### A24 접수일별 고객 통계  GET    /api/v1/statistics/customers?date={date}        200 · CustomerStatistics[]
-# 기대: 200, 이메일 오름차순(대소문자 구분) 배열
-# 비교: 주문을 모두 취소한 고객도 포함되고 그 고객의 totalQuantity·totalAmount는 0
 ### A17 접수일별 주문 통계 — GET /api/v1/statistics/orders?date={date} → 200 OrderStatistics
 # 기대: 200, orderCount=1, placedOrderCount=0, cancelledOrderCount=1, totalQuantity=0, totalAmount=0
 #       (취소한 주문은 주문 수에는 들어가고 수량·금액에서는 빠짐)
@@ -373,9 +249,7 @@ POST {{baseUrl}}/api/v1/orders/{{orderId}}/reorder
 #              totalQuantity:3, totalAmount:17000} ] (이메일 오름차순, 대소문자 구분)
 GET {{baseUrl}}/api/v1/statistics/customers?date={{date}}
 
-### ── 이상철 담당 오류 요청 (팀 최종 6개를 고를 때 후보) ──
 
-### [오류 400] A17 존재하지 않는 날짜
 ###############################################################################
 # 오류 요청 (팀 최종 6개 선정 전 후보: 400 2개 / 404 1개 / 409 3개)
 # 모든 오류 응답은 code·message·fieldErrors를 포함한다
@@ -385,7 +259,6 @@ GET {{baseUrl}}/api/v1/statistics/customers?date={{date}}
 # 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
 GET {{baseUrl}}/api/v1/statistics/orders?date=2026-02-30
 
-### [오류 409] A16 취소 마감(배송일 14:00:00)이 지난 주문 취소
 ### [400] A18 날짜 형식 오류 (YYYY-MM-DD가 아님)
 # 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
 GET {{baseUrl}}/api/v1/statistics/menus?date=2026-11-4
@@ -435,33 +308,3 @@ DELETE {{baseUrl}}/api/v1/menus/{{menuId}}
 #       이미 취소된 주문 id를 넣으면 마감과 관계없이 200이 나온다 (A16-1 규칙)
 # 기대: 409, code=ORDER_NOT_CANCELLABLE, fieldErrors={}, 주문 상태는 PLACED 그대로
 POST {{baseUrl}}/api/v1/orders/{{expiredOrderId}}/cancel
-
-
-##################################################################################################################
-### 실패 케이스
-
-### ID 범위 오류 → 400
-GET http://localhost:8080/api/v1/categories/0
-
-### ID 자료형 오류 → 400
-GET http://localhost:8080/api/v1/categories/abc
-
-### 검색어 누락 → 400
-GET http://localhost:8080/api/v1/menus/search
-
-### 존재하지 않는 카테고리 → 404
-GET http://localhost:8080/api/v1/categories/999999
-
-### A03 카테고리명 중복 등록 → 409
-POST http://localhost:8080/api/v1/categories
-Content-Type: application/json
-
-{
-  "name": "Coffee Beans"
-}
-
-### 사용된 카테고리 삭제 → 409
-DELETE http://localhost:8080/api/v1/categories/1
-
-### 사용된 메뉴 삭제 → 409
-DELETE http://localhost:8080/api/v1/menus/1
