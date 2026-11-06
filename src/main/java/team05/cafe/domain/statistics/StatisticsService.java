@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team05.cafe.domain.order.Order;
 import team05.cafe.domain.order.OrderItem;
+import team05.cafe.domain.order.OrderStatus;
 import team05.cafe.domain.statistics.dto.CustomerStatisticsResponse;
 import team05.cafe.domain.statistics.dto.MenuStatisticsResponse;
 import team05.cafe.domain.statistics.dto.OrderStatisticsResponse;
@@ -132,8 +133,8 @@ public class StatisticsService {
         //sql에서 로우마다 형변환 보다 백단에서 형변환시킴
         LocalDateTime start = date.atStartOfDay();            // 2026-11-03T00:00:00
         LocalDateTime end = date.plusDays(1).atStartOfDay();  // 2026-11-04T00:00:00
-
-        return orderRepository.getMenuStatistics(start, end);
+        OrderStatus status = OrderStatus.PLACED;
+        return orderRepository.getMenuStatistics(start, end, status);
     }
 
 }

@@ -32,7 +32,7 @@ create table if not exists orders
     memo          varchar(200)                 not null,
     postcode      varchar(5)                   not null,
     shipping_date date                         not null,
-    status        enum ('cancelled', 'placed') not null,
+    status enum ('PLACED', 'CANCELLED') not null,
     total_amount  int                          not null
 );
 

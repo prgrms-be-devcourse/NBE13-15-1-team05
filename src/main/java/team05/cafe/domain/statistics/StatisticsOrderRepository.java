@@ -3,6 +3,7 @@ package team05.cafe.domain.statistics;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import team05.cafe.domain.order.Order;
+import team05.cafe.domain.order.OrderStatus;
 import team05.cafe.domain.statistics.dto.MenuStatisticsResponse;
 
 import java.time.LocalDateTime;
@@ -24,10 +25,10 @@ public interface StatisticsOrderRepository extends Repository<Order, Long> {
             )
             from OrderItem oi
             join oi.order o
-            where o.createdAt >= :start and o.createdAt < :end
+            where o.createdAt >= :start and o.createdAt < :end and o.status =  :status
             group by oi.menu.id , oi.menuName, oi.unitPrice
             order by oi.menu.id , oi.unitPrice , oi.menuName
             """)
     //그당시 가격 메뉴 명으로 통계 menu table join 안해도됨
-    List<MenuStatisticsResponse> getMenuStatistics(LocalDateTime start, LocalDateTime end);
+    List<MenuStatisticsResponse> getMenuStatistics(LocalDateTime start, LocalDateTime end, OrderStatus status);
 }
