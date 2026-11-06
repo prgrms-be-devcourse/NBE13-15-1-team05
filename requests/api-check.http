@@ -251,40 +251,29 @@ GET {{baseUrl}}/api/v1/statistics/customers?date={{date}}
 
 
 ###############################################################################
-# 오류 요청 (팀 최종 6개 선정 전 후보: 400 2개 / 404 1개 / 409 3개)
-# 모든 오류 응답은 code·message·fieldErrors를 포함한다
+# 오류 요청 — 팀 최종 6개 (입력 오류 400 2개 / 대상 없음 404 1개 / 업무 조건 위반 409 3개)
+# 서로 다른 검사 조건 6가지. 모든 오류 응답은 code·message·fieldErrors를 포함하고,
+# 거절된 요청은 데이터를 바꾸지 않는다. 위의 정상 요청(A11 포함)을 먼저 실행한 뒤 실행한다.
 ###############################################################################
 
-### [400] A17 존재하지 않는 날짜
-# 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
+### [오류 1/6 · 400] URL 날짜가 실제로 없는 날짜 (A17)
+# 검사 조건: URL 날짜는 2000-01-01~2099-12-31의 실제 날짜여야 함
+# 기대: 400, code=VALIDATION_ERROR, message="입력값을 확인해 주세요.", fieldErrors.date 있음
 GET {{baseUrl}}/api/v1/statistics/orders?date=2026-02-30
 
-### [400] A18 날짜 형식 오류 (YYYY-MM-DD가 아님)
-# 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
-GET {{baseUrl}}/api/v1/statistics/menus?date=2026-11-4
-
-### [400] A18 날짜 누락
-# 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
-GET {{baseUrl}}/api/v1/statistics/menus
-
-### [400] ID 범위 오류
-# 기대: 400, code=VALIDATION_ERROR, fieldErrors.categoryId 있음
+### [오류 2/6 · 400] ID 범위 오류 (A02)
+# 검사 조건: ID는 1 이상의 정수 (1번과 다른 규칙)
+# 기대: 400, code=VALIDATION_ERROR, message="입력값을 확인해 주세요.", fieldErrors.categoryId 있음
 GET {{baseUrl}}/api/v1/categories/0
 
-### [400] ID 자료형 오류
-# 기대: 400, code=VALIDATION_ERROR, fieldErrors.categoryId 있음
-GET {{baseUrl}}/api/v1/categories/abc
-
-### [400] 검색어 누락
-# 기대: 400, code=VALIDATION_ERROR, fieldErrors.keyword 있음
-GET {{baseUrl}}/api/v1/menus/search
-
-### [404] 존재하지 않는 카테고리
-# 기대: 404, code=CATEGORY_NOT_FOUND, fieldErrors={}
+### [오류 3/6 · 404] 존재하지 않는 카테고리 (A02)
+# 검사 조건: 형식은 맞지만 대상이 없음
+# 기대: 404, code=CATEGORY_NOT_FOUND, message="카테고리를 찾을 수 없습니다.", fieldErrors={}
 GET {{baseUrl}}/api/v1/categories/999999
 
-### [409] 카테고리명 중복 등록
-# 기대: 409, code=CATEGORY_NAME_DUPLICATED, fieldErrors={}
+### [오류 4/6 · 409] 카테고리명 중복 등록 (A03)
+# 검사 조건: 다른 카테고리와 이름이 같으면 등록 불가 (init.sql의 "싱글오리진")
+# 기대: 409, code=CATEGORY_NAME_DUPLICATED, message="같은 이름의 카테고리가 이미 있습니다.", fieldErrors={}
 POST {{baseUrl}}/api/v1/categories
 Content-Type: application/json
 
@@ -292,16 +281,41 @@ Content-Type: application/json
   "name": "싱글오리진"
 }
 
-### [409] 메뉴가 등록된 카테고리 삭제
-# 기대: 409, code=CATEGORY_IN_USE, fieldErrors={}
+### [오류 5/6 · 409] 메뉴가 등록된 카테고리 삭제 (A05)
+# 검사 조건: 소속 메뉴가 하나라도 있으면 삭제 불가 (싱글오리진에는 메뉴 1~4가 있음)
+# 기대: 409, code=CATEGORY_IN_USE, message="메뉴가 등록된 카테고리는 삭제할 수 없습니다.", fieldErrors={}
+#       카테고리는 그대로 남음 (A01로 다시 조회해 확인)
 DELETE {{baseUrl}}/api/v1/categories/{{categoryId}}
 
-### [409] 주문에 사용된 메뉴 삭제
+### [오류 6/6 · 409] 주문에 사용된 메뉴 삭제 (A10)
+# 검사 조건: 한 번이라도 주문에 쓰인 메뉴는 삭제 불가 (취소 주문 포함)
 # 준비: A11에서 메뉴 1을 주문함
-# 기대: 409, code=MENU_IN_USE, fieldErrors={}
+# 기대: 409, code=MENU_IN_USE, message="주문에 사용된 메뉴는 삭제할 수 없습니다.", fieldErrors={}
+#       메뉴는 그대로 남음 (A07로 다시 조회해 확인)
 DELETE {{baseUrl}}/api/v1/menus/{{menuId}}
 
-### [409] A16 취소 마감(배송일 14:00:00)이 지난 주문 취소
+
+###############################################################################
+# 참고 — 추가 확인용 오류 요청 (최종 6개에는 포함하지 않음)
+###############################################################################
+
+### [참고 · 400] A18 날짜 형식 오류 (YYYY-MM-DD가 아님)
+# 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
+GET {{baseUrl}}/api/v1/statistics/menus?date=2026-11-4
+
+### [참고 · 400] A18 날짜 누락
+# 기대: 400, code=VALIDATION_ERROR, fieldErrors.date 있음
+GET {{baseUrl}}/api/v1/statistics/menus
+
+### [참고 · 400] ID 자료형 오류
+# 기대: 400, code=VALIDATION_ERROR, fieldErrors.categoryId 있음
+GET {{baseUrl}}/api/v1/categories/abc
+
+### [참고 · 400] 검색어 누락
+# 기대: 400, code=VALIDATION_ERROR, fieldErrors.keyword 있음
+GET {{baseUrl}}/api/v1/menus/search
+
+### [참고 · 409] A16 취소 마감(배송일 14:00:00)이 지난 주문 취소
 # 준비: 배송일이 이미 지난 PLACED 주문의 id를 @expiredOrderId에 넣는다 (예: 전날 14시 전에 접수한 주문)
 #       init.sql 직후의 새 DB에는 이런 주문이 없으므로, 하루가 지난 뒤 실행하거나 이 경계는
 #       자동 테스트(OrderChangeServiceTest, Clock 고정)로 확인한다.
