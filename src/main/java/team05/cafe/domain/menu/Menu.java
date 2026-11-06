@@ -47,8 +47,8 @@ public class Menu {
         this.category = category;
     }
 
-    public void changeAvailability() {
-        this.available = !this.available;
+    public void changeAvailability(boolean available) {
+        this.available = available;
     }
 
     //    갯수가 있다면

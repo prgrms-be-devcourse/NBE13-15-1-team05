@@ -9,6 +9,7 @@ import team05.cafe.domain.category.Category;
 import team05.cafe.domain.category.CategoryRepository;
 import team05.cafe.domain.menu.Menu;
 import team05.cafe.domain.menu.MenuRepository;
+import team05.cafe.domain.menu.dto.MenuAvailabilityRequest;
 import team05.cafe.domain.menu.dto.MenuCreateRequest;
 import team05.cafe.domain.menu.dto.MenuResponse;
 import team05.cafe.domain.menu.dto.MenuUpdateRequest;
@@ -80,12 +81,12 @@ public class MenuService {
 
     @CacheEvict(cacheNames = {CacheNames.MENUS},allEntries = true)
     @Transactional
-    public MenuResponse changeAvailability(@Valid Long menuId) {
+    public MenuResponse changeAvailability(@Valid Long menuId, MenuAvailabilityRequest req) {
         Menu menu = menuRepository.findById(menuId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_MENU)
         );
 
-        menu.changeAvailability();
+        menu.changeAvailability(req.validAvailable());
 
         return MenuResponse.from(menu);
     }

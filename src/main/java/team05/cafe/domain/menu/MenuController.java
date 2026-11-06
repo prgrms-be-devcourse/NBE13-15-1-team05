@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import team05.cafe.domain.menu.dto.MenuAvailabilityRequest;
 import team05.cafe.domain.menu.dto.MenuCreateRequest;
 import team05.cafe.domain.menu.dto.MenuResponse;
 import team05.cafe.domain.menu.dto.MenuUpdateRequest;
@@ -93,8 +94,8 @@ public class MenuController {
      * 특정번호 상품 판매 유.무 수정
      */
     @PutMapping("/{menuId}/availability")
-    public ResponseEntity<MenuResponse> updateMenuAvailability(@PathVariable Long menuId) {
-        return ResponseEntity.ok(menuService.changeAvailability(menuId));
+    public ResponseEntity<MenuResponse> updateMenuAvailability(@PathVariable Long menuId, @RequestBody MenuAvailabilityRequest req) {
+        return ResponseEntity.ok(menuService.changeAvailability(menuId,req));
     }
 
     /**

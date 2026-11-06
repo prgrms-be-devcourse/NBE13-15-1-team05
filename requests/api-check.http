@@ -158,6 +158,11 @@ GET http://localhost:8080/api/v1/menus/search?keyword=_
 
 ### A21 판매 여부 변경      PUT    /api/v1/menus/{menuId}/availability             200 · 전체 Menu
 PUT http://localhost:8080/api/v1/menus/1/availability
+Content-Type: application/json
+
+{
+  "available": true
+}
 
 ### A22 주문 메모 수정      PUT    /api/v1/orders/{orderId}/memo                   200 · 전체 Order
 # 기대: 200, memo가 앞뒤 공백·줄바꿈까지 그대로 저장됨 (다른 필드는 그대로)
