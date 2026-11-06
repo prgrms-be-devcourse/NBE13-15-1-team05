@@ -14,7 +14,7 @@ public class ShippingDateTest {
     @Test
     @DisplayName("13:59:59 주문시 당일 배송")
     void beforeCutoff(){
-        Order order = orderAt(LocalDateTime.of(2026, 11, 6, 14, 0, 0));
+        Order order = orderAt(LocalDateTime.of(2026, 11, 6, 13, 59, 59));
         assertThat(order.getShippingDate()).isEqualTo(LocalDate.of(2026, 11, 6));
     }
 
