@@ -16,7 +16,7 @@ create table menu
     id          bigint auto_increment
         primary key,
     available   bit          not null,
-    description varchar(255) not null,
+    description varchar (300) not null,
     name        varchar(255) not null,
     price       int          not null,
     category_id bigint       not null,

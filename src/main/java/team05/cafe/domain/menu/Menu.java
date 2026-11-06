@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team05.cafe.domain.category.Category;
+import team05.cafe.global.util.TextNormalizer;
 
 @Entity
 @Getter
@@ -22,7 +23,7 @@ public class Menu {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 300)
     private String description;
 
     @Column(nullable = false)
@@ -34,16 +35,23 @@ public class Menu {
 
     @Builder
     public Menu(String name, int price, String description, Category category) {
-        this.name = name;
+        String trimCheckName = TextNormalizer.trimAndCheckLength(name, "name", 1, 100, "메뉴명은 1~100자입니다.");
+        String trimDescription = TextNormalizer.trimAndCheckLength(description, "description", 0, 300, "설명은 0~300자입니다.");
+
+        this.name = trimCheckName;
         this.price = price;
-        this.description = description;
+        this.description = trimDescription;
         this.category = category;
     }
 
     public void update(String name, int price, String description, Category category) {
-        this.name = name;
+
+        String trimCheckName = TextNormalizer.trimAndCheckLength(name, "name", 1, 100, "메뉴명은 1~100자입니다.");
+        String trimDescription = TextNormalizer.trimAndCheckLength(description, "description", 0, 300, "설명은 0~300자입니다.");
+
+        this.name = trimCheckName;
         this.price = price;
-        this.description = description;
+        this.description = trimDescription;
         this.category = category;
     }
 
@@ -51,26 +59,4 @@ public class Menu {
         this.available = available;
     }
 
-    //    갯수가 있다면
-//    @Column(nullable = false)
-//    private int stock;
-//
-//    void changeStock(int stock) {
-//        if (stock > 0) {
-//            this.stock = stock;
-//        }
-//    }
-//
-//    void checkStock() {
-//        if (stock <= 0) {
-//            this.available = false;
-//        }
-//    }
-//
-//    void decreaseStock(int quantity) {
-//        if (this.stock > quantity) {
-//            this.stock -= quantity;
-//        }
-//        throw new BusinessException(ErrorCode.INTERNAL_ERROR);
-//    }
 }

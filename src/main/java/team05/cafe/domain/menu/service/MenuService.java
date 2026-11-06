@@ -33,8 +33,10 @@ public class MenuService {
                 () -> new BusinessException(ErrorCode.NOT_FOUND_CATEGORY)
         );
 
+
+
         Menu menu = Menu.builder()
-                .name(req.name().strip())
+                .name(req.name())
                 .price(req.price())
                 .description(req.description())
                 .category(category)

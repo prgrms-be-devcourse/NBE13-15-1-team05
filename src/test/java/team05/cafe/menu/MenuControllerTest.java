@@ -61,7 +61,7 @@ class MenuControllerTest {
     @Test
     @DisplayName("POST /api/v1/menus - 메뉴 등록 실패")
     void 메뉴_등록_실패() throws Exception {
-        MenuCreateRequest request = new MenuCreateRequest("메뉴1", "", 1L, 10000);  //리퀘스트생성 설명 x
+        MenuCreateRequest request = new MenuCreateRequest("메뉴1", "a".repeat(301), 1L, 10000);  //리퀘스트생성 설명 x
 //        given할필요없음 사용못함
         mockMvc.perform(post("/api/v1/menus")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,6 +1,7 @@
 package team05.cafe.domain.menu;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class MenuController {
      * 특정번호 메뉴 리턴
      */
     @GetMapping("/{menuId}")
-    public ResponseEntity<MenuResponse> findById(@PathVariable Long menuId) {
+    public ResponseEntity<MenuResponse> findById(@PathVariable @Positive Long menuId) {
         return ResponseEntity.ok(menuReadService.findById(menuId));
     }
 
@@ -70,7 +71,7 @@ public class MenuController {
      * 특정번호 삭제
      */
     @DeleteMapping("/{menuId}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable @Positive Long menuId) {
         menuService.deleteMenu(menuId);
         return ResponseEntity.noContent().build();
     }
@@ -83,7 +84,7 @@ public class MenuController {
      * 특정번호 수정
      */
     @PutMapping("/{menuId}")
-    public ResponseEntity<MenuResponse> updateMenu(@PathVariable Long menuId, @Valid @RequestBody MenuUpdateRequest req) {
+    public ResponseEntity<MenuResponse> updateMenu(@PathVariable @Positive Long menuId, @Valid @RequestBody MenuUpdateRequest req) {
         return ResponseEntity.ok(menuService.update(menuId, req));
     }
 
@@ -94,7 +95,7 @@ public class MenuController {
      * 특정번호 상품 판매 유.무 수정
      */
     @PutMapping("/{menuId}/availability")
-    public ResponseEntity<MenuResponse> updateMenuAvailability(@PathVariable Long menuId, @RequestBody MenuAvailabilityRequest req) {
+    public ResponseEntity<MenuResponse> updateMenuAvailability(@PathVariable @Positive Long menuId, @RequestBody MenuAvailabilityRequest req) {
         return ResponseEntity.ok(menuService.changeAvailability(menuId,req));
     }
 
