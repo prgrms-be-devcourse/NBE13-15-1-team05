@@ -1,3 +1,6 @@
+-- 한글·특수문자(ñ, ó)가 깨지지 않도록 클라이언트 문자셋을 utf8mb4로 지정
+SET NAMES utf8mb4;
+
 show databases ;
 use cafe;
 
