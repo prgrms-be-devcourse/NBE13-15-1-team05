@@ -10,21 +10,8 @@
 - 스프링부트 : 4.1.2
 - MYSQL : 8.0
 ### 4. 새 DB 준비·초기 데이터 등록 절차, 백엔드·web 실행 폴더·명령·주소
-- ddl-auto : UPDATE
-```mysql
-#초기 카데고리
-insert into category(name)
-values ('싱글오리진'), ('블렌드');
-
-#초기 메뉴
-insert into menu( available, description, name, price, category_id)
-values
-(true, '콜롬비아 나리뇨 원두를 담은 커피빈 패키지입니다.' , 'Columbia Nariñó' ,5000,1),
-(true, '브라질 세하 두 카파라오 원두를 담은 커피빈 패키지입니다.' , 'Brazil Serra Do Caparaó' ,7000,1),
-(true, '콜롬비아 킨디오 원두를 담은 커피빈 패키지입니다.' , 'Columbia Quindío (White Wine Extended Fermentation)' ,9000,1),
-(true, '에티오피아 시다모 원두를 담은 커피빈 패키지입니다.' , 'Ethiopia Sidamo' ,11000,1);
-- ```
-
+초기 데이터 SQL파일제공
+root/init.sql 
 
 ### 5 .테스트 실행 명령, .http 경로·변수·실행 순서, 시각 경계값 확인 방법
 - 테스트 ./gradlew test
